@@ -70,7 +70,7 @@
   .vehicle .vehicle-arrow{font-size:18px;color:#d1d5db;margin-top:auto;align-self:flex-end}
 
   /* Date panel — 3 column layout */
-  .date-3col{display:grid;grid-template-columns:auto 1fr 1fr;gap:20px;align-items:start;margin-top:8px}
+  .date-3col{display:grid;grid-template-columns:auto 1fr 1fr;gap:20px;align-items:stretch;margin-top:8px}
   .date-col-calendar{display:flex;flex-direction:column;gap:12px}
   .date-col-pricing,.date-col-info{display:flex;flex-direction:column;gap:12px}
   .date-info-card{background:#f8fafc;border:1px solid var(--border);border-radius:var(--radius);padding:16px}
@@ -257,12 +257,11 @@
         <!-- Col 1: Calendar -->
         <div class="date-col-calendar">
           <div id="calendar"></div>
-          <div id="date-summary"></div>
         </div>
 
         <!-- Col 2: Pricing table -->
         <div class="date-col-pricing">
-          <div class="date-info-card" id="pricingTableCard">
+          <div class="date-info-card" id="pricingTableCard" style="height:100%">
             <h4>💰 Hire duration pricing</h4>
             <p id="pricingTableEmpty" style="font-size:13px;color:var(--muted);margin-top:6px">Select a vehicle on the previous step to see pricing.</p>
             <div id="pricingTableWrap" style="display:none;margin-top:10px">
@@ -271,18 +270,18 @@
                   <tr>
                     <th>Days</th>
                     <th>Total (ex VAT)</th>
-                    <th>Per day</th>
+                    <th>Per day (ex VAT)</th>
                     <th>Saving</th>
                   </tr>
                 </thead>
                 <tbody id="pricingTableBody"></tbody>
               </table>
-              <p style="font-size:11px;color:var(--muted);margin-top:8px;line-height:1.5">* Saving compared to hiring each day separately at the 1-day rate. VAT will be added at checkout.</p>
+              <p style="font-size:11px;color:var(--muted);margin-top:8px;line-height:1.5">Saving vs hiring at the 1-day rate each time. VAT added at checkout.</p>
             </div>
           </div>
         </div>
 
-        <!-- Col 3: Info cards -->
+        <!-- Col 3: Info cards + date summary -->
         <div class="date-col-info">
           <div class="date-info-card">
             <h4>📅 Collection &amp; Return Times</h4>
@@ -302,6 +301,7 @@
               </div>
             </div>
           </div>
+          <div id="date-summary"></div>
         </div>
 
       </div>
@@ -825,15 +825,17 @@ function buildPricingTable(){
   }
   wrap.style.display='block'; empty.style.display='none';
   const tiers=selectedVehiclePricingTiers;
-  const day1=tiers[1]!==undefined?tiers[1]:selectedVehiclePrice;
+  // Tiers store the daily rate for that duration band, so total = dailyRate × days
+  const day1Rate=tiers[1]!==undefined?tiers[1]:selectedVehiclePrice;
   const maxDays=Math.max(...Object.keys(tiers).map(Number));
   let rows='';
   for(let d=1;d<=maxDays;d++){
-    const total=tiers[d]!==undefined?tiers[d]:tiers[maxDays];
-    const perDay=(total/d).toFixed(2);
-    // Saving = what you'd pay at day-1 rate × days, minus the actual total
-    const fullRate=day1*d;
-    const saving=fullRate-total;
+    const dailyRate=tiers[d]!==undefined?tiers[d]:tiers[maxDays];
+    const total=dailyRate*d;
+    const perDay=dailyRate.toFixed(2);
+    // Saving = what they'd pay hiring at 1-day rate every day vs actual total
+    const worstCase=day1Rate*d;
+    const saving=worstCase-total;
     const savingHtml=saving>0
       ?`<span class="pt-saving">Save £${saving.toFixed(2)}</span>`
       :`<span class="pt-saving-zero">—</span>`;
@@ -991,7 +993,7 @@ document.getElementById('cancelModal').addEventListener('click',e=>{
 document.getElementById('backBtn').addEventListener('click',()=>setStep(step-1,'back'));
 
 document.getElementById('nextBtn').addEventListener('click',async()=>{
-  if(step===1){ if(!selectedVehicleId){ alert('Please select a vehicle.'); return; } setStep(2); return; }
+  if(step===1){ if(!selectedVehicleId){ alert('Please select a vehicle.'); return; } setStep(2); buildPricingTable(); return; }
   if(step===2){ if(!getSelectedDates()){ alert('Please select your dates.'); return; } setStep(3); return; }
   if(step===3){
     const n=document.getElementById('name').value.trim(), e=document.getElementById('email').value.trim(), p=document.getElementById('phone').value.trim(), pc=document.getElementById('postcode').value.trim(), a=document.getElementById('address').value.trim();
