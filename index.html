@@ -72,14 +72,16 @@
   /* Date panel — 3 column layout */
   .date-3col{display:grid;grid-template-columns:auto 1fr 1fr;gap:20px;align-items:stretch;margin-top:8px}
   .date-col-calendar{display:flex;flex-direction:column;gap:12px}
-  .date-col-pricing,.date-col-info{display:flex;flex-direction:column;gap:12px}
+  .date-col-pricing{display:flex;flex-direction:column}
+  .date-col-pricing .date-info-card{flex:1}
+  .date-col-info{display:flex;flex-direction:column;gap:12px}
   .date-info-card{background:#f8fafc;border:1px solid var(--border);border-radius:var(--radius);padding:16px}
   .date-info-card h4{font-size:14px;font-weight:700;margin-bottom:8px;color:#374151}
   .date-info-card p{font-size:13px;color:var(--muted);line-height:1.6}
   .legend{display:flex;gap:16px;flex-wrap:wrap}
   .legend-item{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:600}
   .legend-dot{width:14px;height:14px;border-radius:4px}
-  #date-summary{padding:14px 16px;background:#eef5ff;border:2px solid var(--brand);border-radius:var(--radius);font-size:14px;font-weight:700;color:var(--brand);display:none;line-height:1.7}
+  #date-summary{padding:14px 16px;background:#eef5ff;border:2px solid var(--brand);border-radius:var(--radius);font-size:14px;font-weight:700;color:var(--brand);display:none;line-height:1.7;margin-top:0}
 
   /* Pricing table */
   .pricing-table{width:100%;border-collapse:collapse;font-size:13px}
@@ -889,6 +891,7 @@ function setStep(n,direction){
     if(i===step-1){ if(direction==='back') p.classList.add('slide-back'); p.classList.add('active'); }
   });
   updateStepIndicator();
+  if(step===2){ buildPricingTable(); }
 
   if(step===9){
     const d=getSelectedDates(); const xs=getExtras(); const cost=calcTotal();
@@ -993,7 +996,7 @@ document.getElementById('cancelModal').addEventListener('click',e=>{
 document.getElementById('backBtn').addEventListener('click',()=>setStep(step-1,'back'));
 
 document.getElementById('nextBtn').addEventListener('click',async()=>{
-  if(step===1){ if(!selectedVehicleId){ alert('Please select a vehicle.'); return; } setStep(2); buildPricingTable(); return; }
+  if(step===1){ if(!selectedVehicleId){ alert('Please select a vehicle.'); return; } setStep(2); return; }
   if(step===2){ if(!getSelectedDates()){ alert('Please select your dates.'); return; } setStep(3); return; }
   if(step===3){
     const n=document.getElementById('name').value.trim(), e=document.getElementById('email').value.trim(), p=document.getElementById('phone').value.trim(), pc=document.getElementById('postcode').value.trim(), a=document.getElementById('address').value.trim();
