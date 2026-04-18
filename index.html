@@ -76,8 +76,8 @@
   /* Pricing and info columns stretch to the height of the tallest sibling */
   .date-col-pricing{display:flex;flex-direction:column;align-self:stretch}
   .date-col-pricing .date-info-card{flex:1;display:flex;flex-direction:column}
-  /* Info column stretches and spaces items so Calendar Key bottom aligns with pricing bottom */
-  .date-col-info{display:flex;flex-direction:column;gap:12px;align-self:stretch;justify-content:space-between}
+  /* Info column stretches to match pricing column height, items stack naturally from top */
+  .date-col-info{display:flex;flex-direction:column;gap:12px;align-self:stretch}
   .date-info-card{background:#f8fafc;border:1px solid var(--border);border-radius:var(--radius);padding:16px}
   .date-info-card h4{font-size:14px;font-weight:700;margin-bottom:8px;color:#374151}
   .date-info-card p{font-size:13px;color:var(--muted);line-height:1.6}
@@ -888,6 +888,8 @@ function buildPricingTable(){
       const total=rate*d;
       rows+=`<tr id="pt-row-${d}"><td>${d} day${d>1?'s':''}</td><td>£${total.toFixed(2)}</td><td class="pt-perday">£${rate.toFixed(2)}/day</td><td><span class="pt-saving-zero">—</span></td></tr>`;
     }
+    // Overflow row for flat-rate vehicles
+    rows+=`<tr id="pt-row-overflow" style="opacity:0.5;font-style:italic"><td id="pt-overflow-label">8+ days</td><td id="pt-overflow-total">—</td><td class="pt-perday">£${rate.toFixed(2)}/day</td><td id="pt-overflow-saving"><span class="pt-saving-zero">Same rate</span></td></tr>`;
   }
   tbody.innerHTML=rows;
   highlightPricingRow();
@@ -903,15 +905,15 @@ function highlightPricingRow(){
   const tiers=selectedVehiclePricingTiers||{};
   const keys=Object.keys(tiers).map(Number).sort((a,b)=>a-b);
   const maxKey=keys.length?keys[keys.length-1]:7;
+  const overflowRow=document.getElementById('pt-row-overflow');
 
-  if(keys.length>0 && d.days>maxKey){
-    // Selection exceeds the pricing table — update and highlight the overflow row
-    const overflowRow=document.getElementById('pt-row-overflow');
+  if(d.days>maxKey){
+    // Update and highlight the overflow row
+    const overflowRate=keys.length?tiers[maxKey]:selectedVehiclePrice;
+    const day1Rate=keys.length?(tiers[1]!==undefined?tiers[1]:tiers[keys[0]]):selectedVehiclePrice;
+    const total=overflowRate*d.days;
+    const saving=day1Rate*d.days-total;
     if(overflowRow){
-      const overflowRate=tiers[maxKey];
-      const day1Rate=tiers[1]!==undefined?tiers[1]:tiers[keys[0]];
-      const total=overflowRate*d.days;
-      const saving=day1Rate*d.days-total;
       overflowRow.querySelector('#pt-overflow-label').textContent=`${d.days} days`;
       overflowRow.querySelector('#pt-overflow-total').textContent=`£${total.toFixed(2)}`;
       overflowRow.querySelector('#pt-overflow-saving').innerHTML=saving>0.01
@@ -921,17 +923,15 @@ function highlightPricingRow(){
       overflowRow.classList.add('pt-active');
     }
   } else {
-    // Reset overflow row to its default dimmed state
-    const overflowRow=document.getElementById('pt-row-overflow');
+    // Reset overflow row to dimmed default
     if(overflowRow){
-      const tKeys=Object.keys(tiers).map(Number).sort((a,b)=>a-b);
-      if(tKeys.length){
-        const mk=tKeys[tKeys.length-1];
-        overflowRow.querySelector('#pt-overflow-label').textContent=`${mk+1}+ days`;
-        overflowRow.querySelector('#pt-overflow-total').textContent='—';
-        overflowRow.querySelector('#pt-overflow-saving').innerHTML=`<span class="pt-saving-zero">Best rate</span>`;
-        overflowRow.style.opacity='0.5'; overflowRow.style.fontStyle='italic';
-      }
+      const mk=keys.length?keys[keys.length-1]:7;
+      overflowRow.querySelector('#pt-overflow-label').textContent=`${mk+1}+ days`;
+      overflowRow.querySelector('#pt-overflow-total').textContent='—';
+      overflowRow.querySelector('#pt-overflow-saving').innerHTML=keys.length
+        ?`<span class="pt-saving-zero">Best rate</span>`
+        :`<span class="pt-saving-zero">Same rate</span>`;
+      overflowRow.style.opacity='0.5'; overflowRow.style.fontStyle='italic';
     }
     const rowKey=Math.min(d.days,maxKey);
     const row=document.getElementById('pt-row-'+rowKey);
