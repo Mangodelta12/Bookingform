@@ -470,15 +470,31 @@ async function loadData(){
   capacityByVeh.clear();
   for(const v of vehicles){ const cap=assets.filter(a=>a.group===v.name).length||0; capacityByVeh.set(v.id,cap>0?cap:1); }
 
+  // Vehicle specs lookup
+  const VEHICLE_SPECS = {
+    'Group A Car':                  { seats: 4, fuel: '55 mpg' },
+    'Group A+ Car':                 { seats: 4, fuel: '46 mpg' },
+    'Car Derived Van':              { seats: 2, fuel: '45 mpg' },
+    'Transit Van':                  { seats: 3, fuel: '35 mpg' },
+    'Long Wheel Base Hi Roof Van':  { seats: 3, fuel: '32 mpg' },
+    'Luton Van With Tail Lift':     { seats: 3, fuel: '28 mpg' },
+  };
+
   box.innerHTML=vehicles.map(v=>{
     const img=v.image||IMAGE_BY_NAME[v.name]||'';
     const p='£'+getDay1Price(v).toFixed(2)+'/day (inc VAT)';
+    const specs=VEHICLE_SPECS[v.name]||{};
+    const specsHtml=`<div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+      ${specs.seats?`<span style="display:flex;align-items:center;gap:4px;font-size:12px;color:#111;background:#f1f5f9;padding:3px 8px;border-radius:999px;font-weight:600">👤 ${specs.seats} seats</span>`:''}
+      ${specs.fuel?`<span style="display:flex;align-items:center;gap:4px;font-size:12px;color:#111;background:#f1f5f9;padding:3px 8px;border-radius:999px;font-weight:600">⛽ ${specs.fuel}</span>`:''}
+      <span style="display:flex;align-items:center;gap:4px;font-size:12px;color:#111;background:#f1f5f9;padding:3px 8px;border-radius:999px;font-weight:600">Manual</span>
+    </div>`;
     return `<div class="vehicle" role="button" tabindex="0" data-id="${esc(v.id)}" data-name="${esc(v.name)}" data-price="${esc(v.price)}" data-pricing-tiers="${esc(JSON.stringify(v.pricingTiers||{}))}">
       <div class="thumb">${img?`<img src="${img}" alt="${esc(v.name)}" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.parentNode.innerHTML='<div style=\\'display:grid;place-items:center;height:100%;color:var(--muted);font-size:13px\\'>No image</div>'">`:'<div style="display:grid;place-items:center;height:100%;color:var(--muted);font-size:13px">No image</div>'}</div>
       <div class="vehicle-info">
         <div class="name">${esc(v.name)}</div>
         <div class="price">${esc(p)}</div>
-        <div style="margin-top:8px;font-size:12px;color:var(--muted)">Tap to select</div>
+        ${specsHtml}
       </div>
     </div>`;
   }).join('');
