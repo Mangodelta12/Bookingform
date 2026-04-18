@@ -70,10 +70,10 @@
   .vehicle .vehicle-arrow{font-size:18px;color:#d1d5db;margin-top:auto;align-self:flex-end}
 
   /* Date panel — 3 column layout */
-  .date-3col{display:grid;grid-template-columns:auto 1fr 1fr;gap:20px;align-items:stretch;margin-top:8px}
+  .date-3col{display:grid;grid-template-columns:auto 1fr 1fr;gap:20px;align-items:start;margin-top:8px}
   .date-col-calendar{display:flex;flex-direction:column;gap:12px}
   .date-col-pricing{display:flex;flex-direction:column}
-  .date-col-pricing .date-info-card{flex:1}
+  .date-col-pricing .date-info-card{flex:1;min-height:420px}
   .date-col-info{display:flex;flex-direction:column;gap:12px}
   .date-info-card{background:#f8fafc;border:1px solid var(--border);border-radius:var(--radius);padding:16px}
   .date-info-card h4{font-size:14px;font-weight:700;margin-bottom:8px;color:#374151}
@@ -822,29 +822,32 @@ function buildPricingTable(){
   const wrap=document.getElementById('pricingTableWrap');
   const empty=document.getElementById('pricingTableEmpty');
   const tbody=document.getElementById('pricingTableBody');
-  if(!selectedVehiclePricingTiers||!Object.keys(selectedVehiclePricingTiers).length){
-    wrap.style.display='none'; empty.style.display='block'; return;
+  if(!selectedVehicleId){ wrap.style.display='none'; empty.style.display='block'; return; }
+  const tiers=selectedVehiclePricingTiers||{};
+  const hasTiers=Object.keys(tiers).length>0;
+  if(!hasTiers){
+    // Fallback: just show flat rate from selectedVehiclePrice
+    wrap.style.display='none';
+    empty.style.display='block';
+    empty.textContent='Pricing details unavailable — please contact us for a quote.';
+    return;
   }
   wrap.style.display='block'; empty.style.display='none';
-  const tiers=selectedVehiclePricingTiers;
-  // Tiers store the daily rate for that duration band, so total = dailyRate × days
-  const day1Rate=tiers[1]!==undefined?tiers[1]:selectedVehiclePrice;
+  // Tiers store the daily rate for each duration band; total = dailyRate × days
+  const day1Rate=tiers[1]!==undefined?Number(tiers[1]):selectedVehiclePrice;
   const maxDays=Math.max(...Object.keys(tiers).map(Number));
   let rows='';
   for(let d=1;d<=maxDays;d++){
-    const dailyRate=tiers[d]!==undefined?tiers[d]:tiers[maxDays];
+    const dailyRate=tiers[d]!==undefined?Number(tiers[d]):Number(tiers[maxDays]);
     const total=dailyRate*d;
-    const perDay=dailyRate.toFixed(2);
-    // Saving = what they'd pay hiring at 1-day rate every day vs actual total
-    const worstCase=day1Rate*d;
-    const saving=worstCase-total;
-    const savingHtml=saving>0
+    const saving=day1Rate*d - total;
+    const savingHtml=saving>0.01
       ?`<span class="pt-saving">Save £${saving.toFixed(2)}</span>`
       :`<span class="pt-saving-zero">—</span>`;
     rows+=`<tr id="pt-row-${d}">
       <td>${d} day${d>1?'s':''}</td>
       <td>£${total.toFixed(2)}</td>
-      <td class="pt-perday">£${perDay}/day</td>
+      <td class="pt-perday">£${dailyRate.toFixed(2)}/day</td>
       <td>${savingHtml}</td>
     </tr>`;
   }
@@ -1076,7 +1079,7 @@ document.getElementById('nextBtn').addEventListener('click',async()=>{
 
 (async function init(){
   await loadData(); await loadInsurance(); await loadExtras(); await loadPackaging();
-  setDriverMode('self'); updateLiveSummary(); updateStepIndicator(); buildPricingTable();
+  setDriverMode('self'); updateLiveSummary(); updateStepIndicator();
 })();
 </script>
 </body>
