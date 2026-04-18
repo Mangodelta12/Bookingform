@@ -819,51 +819,49 @@ function updateLiveSummary(){
 }
 
 function equaliseDateColHeights(){
-  const cal=document.querySelector('.date-col-calendar');
-  const pricing=document.querySelector('.date-col-pricing');
-  const info=document.querySelector('.date-col-info');
-  if(!cal||!pricing||!info) return;
-  // Reset first so we measure natural heights
-  pricing.style.minHeight=''; info.style.minHeight='';
-  const calH=cal.offsetHeight;
-  if(calH>0){
-    pricing.style.minHeight=calH+'px';
-    info.style.minHeight=calH+'px';
-  }
+  requestAnimationFrame(()=>{
+    const cal=document.querySelector('.date-col-calendar');
+    const pricing=document.querySelector('.date-col-pricing');
+    const info=document.querySelector('.date-col-info');
+    if(!cal||!pricing||!info) return;
+    pricing.style.minHeight=''; info.style.minHeight='';
+    const calH=cal.getBoundingClientRect().height;
+    if(calH>100){
+      pricing.style.minHeight=calH+'px';
+      info.style.minHeight=calH+'px';
+    }
+  });
 }
 
 function buildPricingTable(){
   const wrap=document.getElementById('pricingTableWrap');
   const empty=document.getElementById('pricingTableEmpty');
   const tbody=document.getElementById('pricingTableBody');
-  if(!selectedVehicleId){ wrap.style.display='none'; empty.style.display='block'; return; }
+  if(!selectedVehicleId){ wrap.style.display='none'; empty.style.display='block'; empty.textContent='Select a vehicle on the previous step to see pricing.'; return; }
   const tiers=selectedVehiclePricingTiers||{};
-  const hasTiers=Object.keys(tiers).length>0;
-  if(!hasTiers){
-    // Fallback: just show flat rate from selectedVehiclePrice
-    wrap.style.display='none';
-    empty.style.display='block';
-    empty.textContent='Pricing details unavailable — please contact us for a quote.';
-    return;
-  }
+  const keys=Object.keys(tiers);
   wrap.style.display='block'; empty.style.display='none';
-  // Tiers store the daily rate for each duration band; total = dailyRate × days
-  const day1Rate=tiers[1]!==undefined?Number(tiers[1]):selectedVehiclePrice;
-  const maxDays=Math.max(...Object.keys(tiers).map(Number));
   let rows='';
-  for(let d=1;d<=maxDays;d++){
-    const dailyRate=tiers[d]!==undefined?Number(tiers[d]):Number(tiers[maxDays]);
-    const total=dailyRate*d;
-    const saving=day1Rate*d - total;
-    const savingHtml=saving>0.01
-      ?`<span class="pt-saving">Save £${saving.toFixed(2)}</span>`
-      :`<span class="pt-saving-zero">—</span>`;
-    rows+=`<tr id="pt-row-${d}">
-      <td>${d} day${d>1?'s':''}</td>
-      <td>£${total.toFixed(2)}</td>
-      <td class="pt-perday">£${dailyRate.toFixed(2)}/day</td>
-      <td>${savingHtml}</td>
-    </tr>`;
+  if(keys.length>0){
+    // Backend has explicit pricing tiers — daily rate per duration band
+    const day1Rate=Number(tiers[1]!==undefined?tiers[1]:(tiers[keys[0]]));
+    const maxDays=Math.max(...keys.map(Number));
+    for(let d=1;d<=maxDays;d++){
+      const dailyRate=Number(tiers[d]!==undefined?tiers[d]:tiers[maxDays]);
+      const total=dailyRate*d;
+      const saving=day1Rate*d - total;
+      const savingHtml=saving>0.01
+        ?`<span class="pt-saving">Save £${saving.toFixed(2)}</span>`
+        :`<span class="pt-saving-zero">—</span>`;
+      rows+=`<tr id="pt-row-${d}"><td>${d} day${d>1?'s':''}</td><td>£${total.toFixed(2)}</td><td class="pt-perday">£${dailyRate.toFixed(2)}/day</td><td>${savingHtml}</td></tr>`;
+    }
+  } else {
+    // No tiers — use flat daily rate from v.price for up to 7 days
+    const rate=selectedVehiclePrice;
+    for(let d=1;d<=7;d++){
+      const total=rate*d;
+      rows+=`<tr id="pt-row-${d}"><td>${d} day${d>1?'s':''}</td><td>£${total.toFixed(2)}</td><td class="pt-perday">£${rate.toFixed(2)}/day</td><td><span class="pt-saving-zero">—</span></td></tr>`;
+    }
   }
   tbody.innerHTML=rows;
   highlightPricingRow();
@@ -912,7 +910,7 @@ function setStep(n,direction){
     setTimeout(()=>{
       buildPricingTable();
       equaliseDateColHeights();
-    },50);
+    },150);
   }
 
   if(step===9){
