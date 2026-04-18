@@ -858,6 +858,7 @@ function highlightPricingRow(){
 }
 
 
+function updateDateSummary(){
   const el=document.getElementById('date-summary'); if(!el) return;
   const d=getSelectedDates(); if(!d){ el.style.display='none'; return; }
   const days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
