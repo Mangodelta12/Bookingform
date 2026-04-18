@@ -73,7 +73,7 @@
   .date-3col{display:grid;grid-template-columns:auto 1fr 1fr;gap:20px;align-items:start;margin-top:8px}
   .date-col-calendar{display:flex;flex-direction:column;gap:12px}
   .date-col-pricing{display:flex;flex-direction:column}
-  .date-col-pricing .date-info-card{flex:1;min-height:420px}
+  .date-col-pricing .date-info-card{flex:1}
   .date-col-info{display:flex;flex-direction:column;gap:12px}
   .date-info-card{background:#f8fafc;border:1px solid var(--border);border-radius:var(--radius);padding:16px}
   .date-info-card h4{font-size:14px;font-weight:700;margin-bottom:8px;color:#374151}
@@ -290,6 +290,7 @@
             <p>Your vehicle will be ready to collect from <strong>08:00</strong> on your chosen day and due back by <strong>08:00</strong> on your final day.</p>
             <p style="margin-top:8px">You can drop your vehicle off out of hours using our <strong>24 hour key drop facility</strong>.</p>
           </div>
+          <div id="date-summary"></div>
           <div class="date-info-card">
             <h4>Calendar Key</h4>
             <div class="legend" style="margin-top:4px">
@@ -303,7 +304,6 @@
               </div>
             </div>
           </div>
-          <div id="date-summary"></div>
         </div>
 
       </div>
@@ -605,7 +605,7 @@ async function loadData(){
     selectedVehicleId=tile.dataset.id; selectedVehicleName=tile.dataset.name;
     selectedVehiclePrice=Number(tile.dataset.price||0);
     selectedVehiclePricingTiers=JSON.parse(tile.dataset.pricingTiers||'{}');
-    updateLiveSummary(); refreshDisabledDates(); buildPricingTable();
+    updateLiveSummary(); refreshDisabledDates(); buildPricingTable(); setTimeout(equaliseDateColHeights,50);
   }
   box.querySelectorAll('.vehicle').forEach(tile=>{
     tile.addEventListener('click',()=>selectTile(tile));
@@ -615,7 +615,7 @@ async function loadData(){
 
 fp=flatpickr('#calendar',{
   inline:true, mode:'range', minDate:'today', dateFormat:'d/m/Y',
-  onChange(){ updateLiveSummary(); updateDateSummary(); highlightPricingRow(); },
+  onChange(){ updateLiveSummary(); updateDateSummary(); highlightPricingRow(); setTimeout(equaliseDateColHeights,50); },
   onDayCreate(dObj,dStr,fp,dayElem){
     const now=new Date(); now.setHours(0,0,0,0);
     if(dayElem.dateObj<now){ dayElem.style.color='#d1d5db'; dayElem.style.cursor='not-allowed'; }
@@ -818,6 +818,20 @@ function updateLiveSummary(){
   const el=document.getElementById('liveSummaryText'); if(el) el.textContent=lines.join('\n');
 }
 
+function equaliseDateColHeights(){
+  const cal=document.querySelector('.date-col-calendar');
+  const pricing=document.querySelector('.date-col-pricing');
+  const info=document.querySelector('.date-col-info');
+  if(!cal||!pricing||!info) return;
+  // Reset first so we measure natural heights
+  pricing.style.minHeight=''; info.style.minHeight='';
+  const calH=cal.offsetHeight;
+  if(calH>0){
+    pricing.style.minHeight=calH+'px';
+    info.style.minHeight=calH+'px';
+  }
+}
+
 function buildPricingTable(){
   const wrap=document.getElementById('pricingTableWrap');
   const empty=document.getElementById('pricingTableEmpty');
@@ -894,7 +908,12 @@ function setStep(n,direction){
     if(i===step-1){ if(direction==='back') p.classList.add('slide-back'); p.classList.add('active'); }
   });
   updateStepIndicator();
-  if(step===2){ buildPricingTable(); }
+  if(step===2){
+    setTimeout(()=>{
+      buildPricingTable();
+      equaliseDateColHeights();
+    },50);
+  }
 
   if(step===9){
     const d=getSelectedDates(); const xs=getExtras(); const cost=calcTotal();
