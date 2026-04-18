@@ -70,11 +70,11 @@
   .vehicle .vehicle-arrow{font-size:18px;color:#d1d5db;margin-top:auto;align-self:flex-end}
 
   /* Date panel — 3 column layout */
-  .date-3col{display:grid;grid-template-columns:auto 1fr 1fr;gap:20px;align-items:start;margin-top:8px}
-  .date-col-calendar{display:flex;flex-direction:column;gap:12px}
+  .date-3col{display:grid;grid-template-columns:auto 1fr 1fr;gap:20px;align-items:stretch;margin-top:8px}
+  .date-col-calendar{display:flex;flex-direction:column;gap:12px;align-self:start}
   .date-col-pricing{display:flex;flex-direction:column}
-  .date-col-pricing .date-info-card{flex:1}
-  .date-col-info{display:flex;flex-direction:column;gap:12px}
+  .date-col-pricing .date-info-card{flex:1;display:flex;flex-direction:column}
+  .date-col-info{display:flex;flex-direction:column;gap:12px;align-self:start}
   .date-info-card{background:#f8fafc;border:1px solid var(--border);border-radius:var(--radius);padding:16px}
   .date-info-card h4{font-size:14px;font-weight:700;margin-bottom:8px;color:#374151}
   .date-info-card p{font-size:13px;color:var(--muted);line-height:1.6}
@@ -83,15 +83,15 @@
   .legend-dot{width:14px;height:14px;border-radius:4px}
   #date-summary{padding:14px 16px;background:#eef5ff;border:2px solid var(--brand);border-radius:var(--radius);font-size:14px;font-weight:700;color:var(--brand);display:none;line-height:1.7;margin-top:0}
 
-  /* Pricing table */
-  .pricing-table{width:100%;border-collapse:collapse;font-size:13px}
-  .pricing-table th{text-align:left;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.04em;color:var(--muted);padding:6px 8px;border-bottom:2px solid var(--border)}
-  .pricing-table td{padding:8px 8px;border-bottom:1px solid var(--border);vertical-align:middle}
+  /* Pricing table — compact */
+  .pricing-table{width:100%;border-collapse:collapse;font-size:11px}
+  .pricing-table th{text-align:left;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:0.04em;color:var(--muted);padding:5px 6px;border-bottom:2px solid var(--border)}
+  .pricing-table td{padding:5px 6px;border-bottom:1px solid var(--border);vertical-align:middle;font-size:11px}
   .pricing-table tr:last-child td{border-bottom:none}
   .pricing-table tr.pt-active td{background:#eef5ff;font-weight:700;color:var(--brand)}
   .pricing-table tr.pt-active td:first-child{border-radius:6px 0 0 6px}
   .pricing-table tr.pt-active td:last-child{border-radius:0 6px 6px 0}
-  .pt-saving{color:#0f766e;font-weight:600}
+  .pt-saving{color:#0f766e;font-weight:600;font-size:11px}
   .pt-saving-zero{color:var(--muted)}
   .pt-perday{color:var(--muted)}
 
@@ -605,7 +605,7 @@ async function loadData(){
     selectedVehicleId=tile.dataset.id; selectedVehicleName=tile.dataset.name;
     selectedVehiclePrice=Number(tile.dataset.price||0);
     selectedVehiclePricingTiers=JSON.parse(tile.dataset.pricingTiers||'{}');
-    updateLiveSummary(); refreshDisabledDates(); buildPricingTable(); setTimeout(equaliseDateColHeights,50);
+    updateLiveSummary(); refreshDisabledDates(); buildPricingTable();
   }
   box.querySelectorAll('.vehicle').forEach(tile=>{
     tile.addEventListener('click',()=>selectTile(tile));
@@ -615,7 +615,7 @@ async function loadData(){
 
 fp=flatpickr('#calendar',{
   inline:true, mode:'range', minDate:'today', dateFormat:'d/m/Y',
-  onChange(){ updateLiveSummary(); updateDateSummary(); highlightPricingRow(); setTimeout(equaliseDateColHeights,50); },
+  onChange(){ updateLiveSummary(); updateDateSummary(); highlightPricingRow(); },
   onDayCreate(dObj,dStr,fp,dayElem){
     const now=new Date(); now.setHours(0,0,0,0);
     if(dayElem.dateObj<now){ dayElem.style.color='#d1d5db'; dayElem.style.cursor='not-allowed'; }
@@ -818,21 +818,6 @@ function updateLiveSummary(){
   const el=document.getElementById('liveSummaryText'); if(el) el.textContent=lines.join('\n');
 }
 
-function equaliseDateColHeights(){
-  requestAnimationFrame(()=>{
-    const cal=document.querySelector('.date-col-calendar');
-    const pricing=document.querySelector('.date-col-pricing');
-    const info=document.querySelector('.date-col-info');
-    if(!cal||!pricing||!info) return;
-    pricing.style.minHeight=''; info.style.minHeight='';
-    const calH=cal.getBoundingClientRect().height;
-    if(calH>100){
-      pricing.style.minHeight=calH+'px';
-      info.style.minHeight=calH+'px';
-    }
-  });
-}
-
 function buildPricingTable(){
   const wrap=document.getElementById('pricingTableWrap');
   const empty=document.getElementById('pricingTableEmpty');
@@ -909,7 +894,6 @@ function setStep(n,direction){
   if(step===2){
     setTimeout(()=>{
       buildPricingTable();
-      equaliseDateColHeights();
     },150);
   }
 
