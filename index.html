@@ -73,9 +73,11 @@
   .date-3col{display:grid;grid-template-columns:auto 1fr 1fr;gap:20px;align-items:start;margin-top:8px}
   /* Calendar column: same card styling as info cards so all three boxes are visually uniform */
   .date-col-calendar{display:flex;flex-direction:column;align-self:start;background:#f8fafc;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
-  .date-col-pricing{display:flex;flex-direction:column}
+  /* Pricing and info columns stretch to the height of the tallest sibling */
+  .date-col-pricing{display:flex;flex-direction:column;align-self:stretch}
   .date-col-pricing .date-info-card{flex:1;display:flex;flex-direction:column}
-  .date-col-info{display:flex;flex-direction:column;gap:12px;align-self:start}
+  /* Info column stretches and spaces items so Calendar Key bottom aligns with pricing bottom */
+  .date-col-info{display:flex;flex-direction:column;gap:12px;align-self:stretch;justify-content:space-between}
   .date-info-card{background:#f8fafc;border:1px solid var(--border);border-radius:var(--radius);padding:16px}
   .date-info-card h4{font-size:14px;font-weight:700;margin-bottom:8px;color:#374151}
   .date-info-card p{font-size:13px;color:var(--muted);line-height:1.6}
@@ -876,6 +878,9 @@ function buildPricingTable(){
         :`<span class="pt-saving-zero">—</span>`;
       rows+=`<tr id="pt-row-${d}"><td>${d} day${d>1?'s':''}</td><td>£${total.toFixed(2)}</td><td class="pt-perday">£${dailyRate.toFixed(2)}/day</td><td>${savingHtml}</td></tr>`;
     }
+    // Overflow row — shown dimmed by default, updates live when user picks more than maxDays
+    const overflowRate=tiers[maxDays];
+    rows+=`<tr id="pt-row-overflow" style="opacity:0.5;font-style:italic"><td id="pt-overflow-label">${maxDays+1}+ days</td><td id="pt-overflow-total">—</td><td class="pt-perday">£${overflowRate.toFixed(2)}/day</td><td id="pt-overflow-saving"><span class="pt-saving-zero">Best rate</span></td></tr>`;
   } else {
     // No tiers — flat rate, no volume discount possible
     const rate=selectedVehiclePrice;
@@ -889,15 +894,49 @@ function buildPricingTable(){
 }
 
 function highlightPricingRow(){
-  document.querySelectorAll('#pricingTableBody tr').forEach(r=>r.classList.remove('pt-active'));
+  document.querySelectorAll('#pricingTableBody tr').forEach(r=>{
+    r.classList.remove('pt-active');
+    r.style.opacity=''; r.style.fontStyle='';
+  });
   const d=getSelectedDates();
   if(!d) return;
   const tiers=selectedVehiclePricingTiers||{};
   const keys=Object.keys(tiers).map(Number).sort((a,b)=>a-b);
   const maxKey=keys.length?keys[keys.length-1]:7;
-  const rowKey=Math.min(d.days,maxKey);
-  const row=document.getElementById('pt-row-'+rowKey);
-  if(row) row.classList.add('pt-active');
+
+  if(keys.length>0 && d.days>maxKey){
+    // Selection exceeds the pricing table — update and highlight the overflow row
+    const overflowRow=document.getElementById('pt-row-overflow');
+    if(overflowRow){
+      const overflowRate=tiers[maxKey];
+      const day1Rate=tiers[1]!==undefined?tiers[1]:tiers[keys[0]];
+      const total=overflowRate*d.days;
+      const saving=day1Rate*d.days-total;
+      overflowRow.querySelector('#pt-overflow-label').textContent=`${d.days} days`;
+      overflowRow.querySelector('#pt-overflow-total').textContent=`£${total.toFixed(2)}`;
+      overflowRow.querySelector('#pt-overflow-saving').innerHTML=saving>0.01
+        ?`<span class="pt-saving">Save £${saving.toFixed(2)}</span>`
+        :`<span class="pt-saving-zero">—</span>`;
+      overflowRow.style.opacity='1'; overflowRow.style.fontStyle='normal';
+      overflowRow.classList.add('pt-active');
+    }
+  } else {
+    // Reset overflow row to its default dimmed state
+    const overflowRow=document.getElementById('pt-row-overflow');
+    if(overflowRow){
+      const tKeys=Object.keys(tiers).map(Number).sort((a,b)=>a-b);
+      if(tKeys.length){
+        const mk=tKeys[tKeys.length-1];
+        overflowRow.querySelector('#pt-overflow-label').textContent=`${mk+1}+ days`;
+        overflowRow.querySelector('#pt-overflow-total').textContent='—';
+        overflowRow.querySelector('#pt-overflow-saving').innerHTML=`<span class="pt-saving-zero">Best rate</span>`;
+        overflowRow.style.opacity='0.5'; overflowRow.style.fontStyle='italic';
+      }
+    }
+    const rowKey=Math.min(d.days,maxKey);
+    const row=document.getElementById('pt-row-'+rowKey);
+    if(row) row.classList.add('pt-active');
+  }
 }
 
 function updateDateSummary(){
