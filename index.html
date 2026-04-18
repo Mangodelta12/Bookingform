@@ -71,7 +71,8 @@
 
   /* Date panel — 3 column layout */
   .date-3col{display:grid;grid-template-columns:auto 1fr 1fr;gap:20px;align-items:start;margin-top:8px}
-  .date-col-calendar{display:flex;flex-direction:column;gap:12px;align-self:start;margin-top:0}
+  /* Calendar column: same card styling as info cards so all three boxes are visually uniform */
+  .date-col-calendar{display:flex;flex-direction:column;align-self:start;background:#f8fafc;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
   .date-col-pricing{display:flex;flex-direction:column}
   .date-col-pricing .date-info-card{flex:1;display:flex;flex-direction:column}
   .date-col-info{display:flex;flex-direction:column;gap:12px;align-self:start}
@@ -95,9 +96,9 @@
   .pt-saving-zero{color:var(--muted)}
   .pt-perday{color:var(--muted)}
 
-  /* Calendar overrides */
+  /* Calendar overrides — sits inside its own card div now, no extra shadow needed */
   .flatpickr-calendar.inline{margin:0 !important;margin-top:0 !important}
-  .flatpickr-calendar{box-shadow:0 8px 30px rgba(0,0,0,.12)!important;border-radius:12px!important;border:1px solid var(--border)!important;overflow:visible!important}
+  .flatpickr-calendar{box-shadow:none !important;border:none !important;border-radius:0 !important;overflow:visible!important}
   .flatpickr-calendar.inline{position:relative!important;top:auto!important;display:block!important}
   .flatpickr-days,.dayContainer{width:auto!important;max-width:none!important;min-width:unset!important}
   .flatpickr-day{width:42px!important;max-width:42px!important;height:42px!important;line-height:42px!important;margin:2px!important}
