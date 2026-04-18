@@ -69,29 +69,30 @@
   .vehicle .price{color:var(--brand);font-size:14px;font-weight:600}
   .vehicle .vehicle-arrow{font-size:18px;color:#d1d5db;margin-top:auto;align-self:flex-end}
 
-  /* Date panel */
-  .date-layout{display:flex;flex-direction:column;align-items:center;gap:24px;margin-top:8px}
-  .date-top{display:flex;gap:32px;align-items:stretch;justify-content:center;flex-wrap:wrap;width:100%}
-  .date-info{display:flex;flex-direction:column;gap:16px;max-width:300px;min-width:240px;flex:1}
+  /* Date panel — 3 column layout */
+  .date-3col{display:grid;grid-template-columns:auto 1fr 1fr;gap:20px;align-items:start;margin-top:8px}
+  .date-col-calendar{display:flex;flex-direction:column;gap:12px}
+  .date-col-pricing,.date-col-info{display:flex;flex-direction:column;gap:12px}
   .date-info-card{background:#f8fafc;border:1px solid var(--border);border-radius:var(--radius);padding:16px}
   .date-info-card h4{font-size:14px;font-weight:700;margin-bottom:8px;color:#374151}
   .date-info-card p{font-size:13px;color:var(--muted);line-height:1.6}
   .legend{display:flex;gap:16px;flex-wrap:wrap}
   .legend-item{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:600}
   .legend-dot{width:14px;height:14px;border-radius:4px}
-  #date-summary{padding:14px 16px;background:#eef5ff;border:2px solid var(--brand);border-radius:var(--radius);font-size:14px;font-weight:700;color:var(--brand);display:none;line-height:1.7;width:100%;text-align:left;margin-top:auto}
+  #date-summary{padding:14px 16px;background:#eef5ff;border:2px solid var(--brand);border-radius:var(--radius);font-size:14px;font-weight:700;color:var(--brand);display:none;line-height:1.7}
 
-  /* Postcode lookup */
-  .postcode-lookup{display:flex;gap:8px;margin-bottom:6px}
-  .postcode-lookup input{flex:1}
-  .postcode-lookup button{width:auto;padding:11px 16px;background:#f8fafc;border:1px solid var(--border);border-radius:10px;font-weight:600;font-size:14px;cursor:pointer;white-space:nowrap;color:var(--text);transition:background .15s}
-  .postcode-lookup button:hover{background:#f1f5f9}
-  .postcode-suggestions{border:1px solid var(--border);border-radius:10px;background:#fff;overflow:hidden;display:none;margin-bottom:8px;box-shadow:0 4px 12px rgba(0,0,0,.08)}
-  .postcode-suggestion{padding:10px 14px;font-size:14px;cursor:pointer;border-bottom:1px solid var(--border);transition:background .15s}
-  .postcode-suggestion:last-child{border-bottom:none}
-  .postcode-suggestion:hover{background:#eef5ff;color:var(--brand)}
-  .postcode-suggestion .addr-line1{font-weight:600}
-  .postcode-suggestion .addr-line2{font-size:12px;color:var(--muted);margin-top:2px}
+  /* Pricing table */
+  .pricing-table{width:100%;border-collapse:collapse;font-size:13px}
+  .pricing-table th{text-align:left;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:0.04em;color:var(--muted);padding:6px 8px;border-bottom:2px solid var(--border)}
+  .pricing-table td{padding:8px 8px;border-bottom:1px solid var(--border);vertical-align:middle}
+  .pricing-table tr:last-child td{border-bottom:none}
+  .pricing-table tr.pt-active td{background:#eef5ff;font-weight:700;color:var(--brand)}
+  .pricing-table tr.pt-active td:first-child{border-radius:6px 0 0 6px}
+  .pricing-table tr.pt-active td:last-child{border-radius:0 6px 6px 0}
+  .pt-saving{color:#0f766e;font-weight:600}
+  .pt-saving-zero{color:var(--muted)}
+  .pt-perday{color:var(--muted)}
+
 
   .flatpickr-calendar.inline{margin:0 !important}
   .flatpickr-innerContainer{padding:4px 8px 8px !important}
@@ -200,9 +201,15 @@
   .checkbox-row input[type=checkbox]{width:18px;height:18px;accent-color:var(--brand);flex-shrink:0;margin:0}
   .checkbox-row label{margin:0;font-weight:500;font-size:14px;cursor:pointer}
 
+  @media(max-width:1024px){
+    .date-3col{grid-template-columns:auto 1fr;grid-template-rows:auto auto}
+    .date-col-info{grid-column:1/-1;flex-direction:row;flex-wrap:wrap}
+    .date-col-info .date-info-card{flex:1;min-width:200px}
+  }
   @media(max-width:900px){
     .vehicle-list{grid-template-columns:1fr}
-    .date-top{flex-direction:column;align-items:center}
+    .date-3col{grid-template-columns:1fr}
+    .date-col-info{flex-direction:column}
     .row{grid-template-columns:1fr}
   }
   @media(max-width:600px){
@@ -245,31 +252,58 @@
     <!-- Step 2: Dates -->
     <div id="panel-2" class="panel">
       <div class="section-label">Select Booking Dates</div>
-      <div class="date-layout">
-        <div class="date-top">
+      <div class="date-3col">
+
+        <!-- Col 1: Calendar -->
+        <div class="date-col-calendar">
           <div id="calendar"></div>
-          <div class="date-info">
-            <div class="date-info-card">
-              <h4>📅 Collection &amp; Return Times</h4>
-              <p>Your vehicle will be ready to collect from <strong>08:00</strong> on your chosen day and due back by <strong>08:00</strong> on your final day.</p>
-              <p style="margin-top:8px">You can drop your vehicle off out of hours using our <strong>24 hour key drop facility</strong>.</p>
+          <div id="date-summary"></div>
+        </div>
+
+        <!-- Col 2: Pricing table -->
+        <div class="date-col-pricing">
+          <div class="date-info-card" id="pricingTableCard">
+            <h4>💰 Hire duration pricing</h4>
+            <p id="pricingTableEmpty" style="font-size:13px;color:var(--muted);margin-top:6px">Select a vehicle on the previous step to see pricing.</p>
+            <div id="pricingTableWrap" style="display:none;margin-top:10px">
+              <table class="pricing-table" id="pricingTable">
+                <thead>
+                  <tr>
+                    <th>Days</th>
+                    <th>Total (ex VAT)</th>
+                    <th>Per day</th>
+                    <th>Saving</th>
+                  </tr>
+                </thead>
+                <tbody id="pricingTableBody"></tbody>
+              </table>
+              <p style="font-size:11px;color:var(--muted);margin-top:8px;line-height:1.5">* Saving compared to hiring each day separately at the 1-day rate. VAT will be added at checkout.</p>
             </div>
-            <div class="date-info-card">
-              <h4>Calendar Key</h4>
-              <div class="legend" style="margin-top:4px">
-                <div class="legend-item">
-                  <div class="legend-dot" style="background:#dcfce7;border:1px solid #15803d"></div>
-                  <span style="color:#15803d">Available</span>
-                </div>
-                <div class="legend-item">
-                  <div class="legend-dot" style="background:#fee2e2;border:1px solid #dc2626"></div>
-                  <span style="color:#dc2626">Fully booked</span>
-                </div>
-              </div>
-            </div>
-            <div id="date-summary"></div>
           </div>
         </div>
+
+        <!-- Col 3: Info cards -->
+        <div class="date-col-info">
+          <div class="date-info-card">
+            <h4>📅 Collection &amp; Return Times</h4>
+            <p>Your vehicle will be ready to collect from <strong>08:00</strong> on your chosen day and due back by <strong>08:00</strong> on your final day.</p>
+            <p style="margin-top:8px">You can drop your vehicle off out of hours using our <strong>24 hour key drop facility</strong>.</p>
+          </div>
+          <div class="date-info-card">
+            <h4>Calendar Key</h4>
+            <div class="legend" style="margin-top:4px">
+              <div class="legend-item">
+                <div class="legend-dot" style="background:#dcfce7;border:1px solid #15803d"></div>
+                <span style="color:#15803d">Available</span>
+              </div>
+              <div class="legend-item">
+                <div class="legend-dot" style="background:#fee2e2;border:1px solid #dc2626"></div>
+                <span style="color:#dc2626">Fully booked</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -286,22 +320,19 @@
           <input id="email" type="email" placeholder="you@example.com" required>
         </div>
       </div>
-      <div class="form-group">
-        <label for="phone">Phone number</label>
-        <input id="phone" type="tel" placeholder="+44..." required>
-      </div>
-      <div class="form-group">
-        <label for="postcode">Postcode</label>
-        <div class="postcode-lookup">
-          <input id="postcode" placeholder="e.g. PO19 8PQ" required autocomplete="postal-code">
-          <button type="button" id="postcodeBtn" onclick="lookupPostcode()">Find address</button>
+      <div class="row">
+        <div class="form-group">
+          <label for="phone">Phone number</label>
+          <input id="phone" type="tel" placeholder="+44..." required>
         </div>
-        <div id="postcodeSuggestions" class="postcode-suggestions"></div>
-        <div id="postcodeError" class="error-message"></div>
+        <div class="form-group">
+          <label for="postcode">Postcode</label>
+          <input id="postcode" placeholder="e.g. PO19 8PQ" required>
+        </div>
       </div>
       <div class="form-group">
         <label for="address">Address</label>
-        <textarea id="address" placeholder="Start typing your postcode above, or enter manually..." rows="4" required></textarea>
+        <textarea id="address" placeholder="House number, street, town..." rows="4" required></textarea>
       </div>
     </div>
 
@@ -572,7 +603,7 @@ async function loadData(){
     selectedVehicleId=tile.dataset.id; selectedVehicleName=tile.dataset.name;
     selectedVehiclePrice=Number(tile.dataset.price||0);
     selectedVehiclePricingTiers=JSON.parse(tile.dataset.pricingTiers||'{}');
-    updateLiveSummary(); refreshDisabledDates();
+    updateLiveSummary(); refreshDisabledDates(); buildPricingTable();
   }
   box.querySelectorAll('.vehicle').forEach(tile=>{
     tile.addEventListener('click',()=>selectTile(tile));
@@ -582,7 +613,7 @@ async function loadData(){
 
 fp=flatpickr('#calendar',{
   inline:true, mode:'range', minDate:'today', dateFormat:'d/m/Y',
-  onChange(){ updateLiveSummary(); updateDateSummary(); },
+  onChange(){ updateLiveSummary(); updateDateSummary(); highlightPricingRow(); },
   onDayCreate(dObj,dStr,fp,dayElem){
     const now=new Date(); now.setHours(0,0,0,0);
     if(dayElem.dateObj<now){ dayElem.style.color='#d1d5db'; dayElem.style.cursor='not-allowed'; }
@@ -785,7 +816,48 @@ function updateLiveSummary(){
   const el=document.getElementById('liveSummaryText'); if(el) el.textContent=lines.join('\n');
 }
 
-function updateDateSummary(){
+function buildPricingTable(){
+  const wrap=document.getElementById('pricingTableWrap');
+  const empty=document.getElementById('pricingTableEmpty');
+  const tbody=document.getElementById('pricingTableBody');
+  if(!selectedVehiclePricingTiers||!Object.keys(selectedVehiclePricingTiers).length){
+    wrap.style.display='none'; empty.style.display='block'; return;
+  }
+  wrap.style.display='block'; empty.style.display='none';
+  const tiers=selectedVehiclePricingTiers;
+  const day1=tiers[1]!==undefined?tiers[1]:selectedVehiclePrice;
+  const maxDays=Math.max(...Object.keys(tiers).map(Number));
+  let rows='';
+  for(let d=1;d<=maxDays;d++){
+    const total=tiers[d]!==undefined?tiers[d]:tiers[maxDays];
+    const perDay=(total/d).toFixed(2);
+    // Saving = what you'd pay at day-1 rate × days, minus the actual total
+    const fullRate=day1*d;
+    const saving=fullRate-total;
+    const savingHtml=saving>0
+      ?`<span class="pt-saving">Save £${saving.toFixed(2)}</span>`
+      :`<span class="pt-saving-zero">—</span>`;
+    rows+=`<tr id="pt-row-${d}">
+      <td>${d} day${d>1?'s':''}</td>
+      <td>£${total.toFixed(2)}</td>
+      <td class="pt-perday">£${perDay}/day</td>
+      <td>${savingHtml}</td>
+    </tr>`;
+  }
+  tbody.innerHTML=rows;
+  highlightPricingRow();
+}
+
+function highlightPricingRow(){
+  // Remove all active highlights
+  document.querySelectorAll('#pricingTableBody tr').forEach(r=>r.classList.remove('pt-active'));
+  const d=getSelectedDates();
+  if(!d) return;
+  const row=document.getElementById('pt-row-'+Math.min(d.days,7));
+  if(row) row.classList.add('pt-active');
+}
+
+
   const el=document.getElementById('date-summary'); if(!el) return;
   const d=getSelectedDates(); if(!d){ el.style.display='none'; return; }
   const days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
@@ -996,66 +1068,9 @@ document.getElementById('nextBtn').addEventListener('click',async()=>{
   }catch(e){ nextBtn.disabled=false; nextBtn.textContent=origText; nextBtn.style.opacity='1'; msg.textContent='Network error: '+(e.message||e); msg.className='err'; }
 });
 
-// Postcode lookup via postcodes.io (free, no API key)
-async function lookupPostcode(){
-  const pcInput=document.getElementById('postcode');
-  const errEl=document.getElementById('postcodeError');
-  const sugEl=document.getElementById('postcodeSuggestions');
-  const btn=document.getElementById('postcodeBtn');
-  const pc=(pcInput.value||'').trim().replace(/\s+/g,'').toUpperCase();
-  errEl.textContent=''; sugEl.style.display='none'; sugEl.innerHTML='';
-  if(!pc){ errEl.textContent='Please enter a postcode first.'; return; }
-  btn.textContent='Looking up...'; btn.disabled=true;
-  try{
-    const r=await fetch(`https://api.postcodes.io/postcodes/${encodeURIComponent(pc)}`);
-    const j=await r.json();
-    btn.textContent='Find address'; btn.disabled=false;
-    if(j.status!==200||!j.result){ errEl.textContent='Postcode not found — please enter your address manually.'; return; }
-    const res=j.result;
-    // Format postcode properly
-    pcInput.value=res.postcode;
-    // Build a few address suggestions from the result
-    // postcodes.io doesn't return full street addresses — we use it to confirm
-    // the postcode is valid and fill in the town/county, then let user complete the street
-    const town=res.admin_ward||res.parish||'';
-    const district=res.admin_district||'';
-    const county=res.admin_county||res.european_electoral_region||'';
-    // Show one entry to auto-fill town info, user adds house number/street
-    const suggestions=[
-      { line1: res.postcode, line2: [district, county].filter(Boolean).join(', ') }
-    ];
-    sugEl.innerHTML=suggestions.map(s=>`
-      <div class="postcode-suggestion" onclick="fillAddress('${esc(res.postcode)}','${esc(district)}','${esc(county)}')">
-        <div class="addr-line1">${esc(s.line1)}</div>
-        <div class="addr-line2">${esc(s.line2)} — click to use this postcode</div>
-      </div>
-    `).join('');
-    sugEl.style.display='block';
-  }catch(e){
-    btn.textContent='Find address'; btn.disabled=false;
-    errEl.textContent='Lookup failed — please enter your address manually.';
-  }
-}
-
-function fillAddress(postcode, district, county){
-  document.getElementById('postcode').value=postcode;
-  const addrEl=document.getElementById('address');
-  // Pre-fill town/county if address is empty, leave cursor for user to add street
-  if(!addrEl.value.trim()){
-    const town=[district,county].filter(Boolean).join(', ');
-    addrEl.value=town?'\n'+town:'';
-    // Place cursor at start so user types house number / street first
-    addrEl.setSelectionRange(0,0); addrEl.focus();
-  }
-  document.getElementById('postcodeSuggestions').style.display='none';
-}
-
-// Allow Enter key on postcode field to trigger lookup
-document.getElementById('postcode').addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); lookupPostcode(); } });
-
 (async function init(){
   await loadData(); await loadInsurance(); await loadExtras(); await loadPackaging();
-  setDriverMode('self'); updateLiveSummary(); updateStepIndicator();
+  setDriverMode('self'); updateLiveSummary(); updateStepIndicator(); buildPricingTable();
 })();
 </script>
 </body>
