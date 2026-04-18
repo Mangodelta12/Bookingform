@@ -70,8 +70,8 @@
   .vehicle .vehicle-arrow{font-size:18px;color:#d1d5db;margin-top:auto;align-self:flex-end}
 
   /* Date panel — 3 column layout */
-  .date-3col{display:grid;grid-template-columns:auto 1fr 1fr;gap:20px;align-items:stretch;margin-top:8px}
-  .date-col-calendar{display:flex;flex-direction:column;gap:12px;align-self:start}
+  .date-3col{display:grid;grid-template-columns:auto 1fr 1fr;gap:20px;align-items:start;margin-top:8px}
+  .date-col-calendar{display:flex;flex-direction:column;gap:12px;align-self:start;padding-top:0;margin-top:0}
   .date-col-pricing{display:flex;flex-direction:column}
   .date-col-pricing .date-info-card{flex:1;display:flex;flex-direction:column}
   .date-col-info{display:flex;flex-direction:column;gap:12px;align-self:start}
@@ -95,9 +95,15 @@
   .pt-saving-zero{color:var(--muted)}
   .pt-perday{color:var(--muted)}
 
-
-  .flatpickr-calendar.inline{margin:0 !important}
+  /* Calendar overrides */
+  .flatpickr-calendar.inline{margin:0 !important;margin-top:0 !important}
+  .flatpickr-calendar{box-shadow:0 8px 30px rgba(0,0,0,.12)!important;border-radius:12px!important;border:1px solid var(--border)!important;overflow:visible!important}
+  .flatpickr-calendar.inline{position:relative!important;top:auto!important;display:block!important}
+  .flatpickr-days,.dayContainer{width:auto!important;max-width:none!important;min-width:unset!important}
+  .flatpickr-day{width:42px!important;max-width:42px!important;height:42px!important;line-height:42px!important;margin:2px!important}
+  .flatpickr-day.selected,.flatpickr-day.startRange,.flatpickr-day.endRange,.flatpickr-day.inRange{background:var(--brand)!important;border-color:var(--brand)!important;color:#fff!important}
   .flatpickr-innerContainer{padding:4px 8px 8px !important}
+  #calendar{line-height:0;font-size:0}
 
   /* Insurance / extras */
   .extra{display:flex;align-items:flex-start;gap:12px;border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:10px;background:#fafafa;transition:border-color .2s,background .2s}
@@ -171,13 +177,6 @@
   .disabled{opacity:.5;pointer-events:none}
   input.disabled{background:#f9fafb}
   .summary-bar{display:none}
-
-  /* Calendar overrides */
-  .flatpickr-calendar{box-shadow:0 8px 30px rgba(0,0,0,.12)!important;border-radius:12px!important;border:1px solid var(--border)!important;overflow:visible!important}
-  .flatpickr-calendar.inline{position:relative!important;top:auto!important;display:block!important}
-  .flatpickr-days,.dayContainer{width:auto!important;max-width:none!important;min-width:unset!important}
-  .flatpickr-day{width:42px!important;max-width:42px!important;height:42px!important;line-height:42px!important;margin:2px!important}
-  .flatpickr-day.selected,.flatpickr-day.startRange,.flatpickr-day.endRange,.flatpickr-day.inRange{background:var(--brand)!important;border-color:var(--brand)!important;color:#fff!important}
 
   /* Review summary */
   .review-table{width:100%;border-collapse:collapse;margin-top:8px}
@@ -498,7 +497,7 @@
   </div>
 </div>
 
-<!-- Cancel confirmation modal (inline, not fixed-position) -->
+<!-- Cancel confirmation modal -->
 <div id="cancelModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:1000;align-items:center;justify-content:center">
   <div style="background:#fff;border-radius:16px;padding:28px 24px;max-width:400px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.2)">
     <h3 style="font-size:18px;font-weight:700;margin-bottom:8px">Cancel booking?</h3>
@@ -551,13 +550,36 @@ let fp;
   }
 })();
 
+// Normalise pricing tiers from the API.
+// Some vehicles store per-day rates (value decreases or stays flat as days increase).
+// Others store running totals (value increases as days increase).
+// Detect by checking whether tier values increase with duration; if so, convert to per-day rates.
+function normaliseTiers(rawTiers){
+  const keys = Object.keys(rawTiers).map(Number).sort((a,b)=>a-b);
+  if(keys.length < 2) return rawTiers;
+  // If ANY consecutive pair shows the value going up, it's a total-price tier
+  const isTotals = keys.some((k,i) => i > 0 && rawTiers[k] > rawTiers[keys[i-1]]);
+  if(!isTotals) return rawTiers;
+  // Convert totals to per-day rates
+  const normalised = {};
+  keys.forEach(k => { normalised[k] = rawTiers[k] / k; });
+  return normalised;
+}
+
 function getPriceForDays(days){
   if(!selectedVehiclePricingTiers) return selectedVehiclePrice;
-  if(days>=1&&days<=7&&selectedVehiclePricingTiers[days]!==undefined) return selectedVehiclePricingTiers[days];
-  if(days>7&&selectedVehiclePricingTiers[7]!==undefined) return selectedVehiclePricingTiers[7];
+  const keys = Object.keys(selectedVehiclePricingTiers).map(Number).sort((a,b)=>a-b);
+  if(!keys.length) return selectedVehiclePrice;
+  const maxKey = keys[keys.length-1];
+  if(days >= 1 && selectedVehiclePricingTiers[days] !== undefined) return selectedVehiclePricingTiers[days];
+  if(days > maxKey) return selectedVehiclePricingTiers[maxKey];
   return selectedVehiclePrice;
 }
-function getDay1Price(v){ const t=v.pricingTiers||{}; return addVAT(t[1]!==undefined?t[1]:v.price); }
+
+function getDay1Price(v){
+  const t = v.pricingTiers ? normaliseTiers(v.pricingTiers) : {};
+  return addVAT(t[1] !== undefined ? t[1] : v.price);
+}
 
 async function loadData(){
   const box=document.getElementById('vehicles'); box.innerHTML='<div class="muted">Loading...</div>';
@@ -602,9 +624,12 @@ async function loadData(){
   function selectTile(tile){
     box.querySelectorAll('.vehicle').forEach(t=>t.classList.remove('selected'));
     tile.classList.add('selected');
-    selectedVehicleId=tile.dataset.id; selectedVehicleName=tile.dataset.name;
+    selectedVehicleId=tile.dataset.id;
+    selectedVehicleName=tile.dataset.name;
     selectedVehiclePrice=Number(tile.dataset.price||0);
-    selectedVehiclePricingTiers=JSON.parse(tile.dataset.pricingTiers||'{}');
+    // Normalise tiers: detect and convert total-price tiers to per-day rates
+    const rawTiers=JSON.parse(tile.dataset.pricingTiers||'{}');
+    selectedVehiclePricingTiers=normaliseTiers(rawTiers);
     updateLiveSummary(); refreshDisabledDates(); buildPricingTable();
   }
   box.querySelectorAll('.vehicle').forEach(tile=>{
@@ -731,7 +756,6 @@ const dvlaHint=document.getElementById('dvlaHint');
 dvlaInput.addEventListener('input',()=>{
   let val=dvlaInput.value.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,10);
   dvlaInput.value=val;
-  // GOV.UK issues exactly 8-character codes
   if(val&&val.length!==8){ dvlaHint.classList.add('bad'); dvlaHint.textContent='DVLA check codes are exactly 8 characters — please check your code.'; }
   else{ dvlaHint.classList.remove('bad'); dvlaHint.textContent='This is the one-time 8-character code from the GOV.UK Share your driving licence service.'; }
 });
@@ -823,25 +847,36 @@ function buildPricingTable(){
   const empty=document.getElementById('pricingTableEmpty');
   const tbody=document.getElementById('pricingTableBody');
   if(!selectedVehicleId){ wrap.style.display='none'; empty.style.display='block'; empty.textContent='Select a vehicle on the previous step to see pricing.'; return; }
+
   const tiers=selectedVehiclePricingTiers||{};
-  const keys=Object.keys(tiers);
+  const keys=Object.keys(tiers).map(Number).sort((a,b)=>a-b);
+
   wrap.style.display='block'; empty.style.display='none';
   let rows='';
+
   if(keys.length>0){
-    // Backend has explicit pricing tiers — daily rate per duration band
-    const day1Rate=Number(tiers[1]!==undefined?tiers[1]:(tiers[keys[0]]));
-    const maxDays=Math.max(...keys.map(Number));
+    // tiers are already normalised to per-day rates by this point
+    const day1Rate=tiers[1]!==undefined?tiers[1]:tiers[keys[0]];
+    const maxDays=keys[keys.length-1];
     for(let d=1;d<=maxDays;d++){
-      const dailyRate=Number(tiers[d]!==undefined?tiers[d]:tiers[maxDays]);
+      // Use exact tier if available, else interpolate to nearest lower key
+      let dailyRate;
+      if(tiers[d]!==undefined){
+        dailyRate=tiers[d];
+      } else {
+        // Find the nearest defined key below d
+        const lowerKeys=keys.filter(k=>k<d);
+        dailyRate=lowerKeys.length?tiers[lowerKeys[lowerKeys.length-1]]:tiers[keys[0]];
+      }
       const total=dailyRate*d;
-      const saving=day1Rate*d - total;
+      const saving=day1Rate*d-total;
       const savingHtml=saving>0.01
         ?`<span class="pt-saving">Save £${saving.toFixed(2)}</span>`
         :`<span class="pt-saving-zero">—</span>`;
       rows+=`<tr id="pt-row-${d}"><td>${d} day${d>1?'s':''}</td><td>£${total.toFixed(2)}</td><td class="pt-perday">£${dailyRate.toFixed(2)}/day</td><td>${savingHtml}</td></tr>`;
     }
   } else {
-    // No tiers — use flat daily rate from v.price for up to 7 days
+    // No tiers — flat rate, no volume discount possible
     const rate=selectedVehiclePrice;
     for(let d=1;d<=7;d++){
       const total=rate*d;
@@ -853,14 +888,16 @@ function buildPricingTable(){
 }
 
 function highlightPricingRow(){
-  // Remove all active highlights
   document.querySelectorAll('#pricingTableBody tr').forEach(r=>r.classList.remove('pt-active'));
   const d=getSelectedDates();
   if(!d) return;
-  const row=document.getElementById('pt-row-'+Math.min(d.days,7));
+  const tiers=selectedVehiclePricingTiers||{};
+  const keys=Object.keys(tiers).map(Number).sort((a,b)=>a-b);
+  const maxKey=keys.length?keys[keys.length-1]:7;
+  const rowKey=Math.min(d.days,maxKey);
+  const row=document.getElementById('pt-row-'+rowKey);
   if(row) row.classList.add('pt-active');
 }
-
 
 function updateDateSummary(){
   const el=document.getElementById('date-summary'); if(!el) return;
@@ -874,12 +911,9 @@ function updateDateSummary(){
 }
 
 function updateStepIndicator(){
-  // Desktop pills
   document.querySelectorAll('.step').forEach((s,i)=>{ s.classList.toggle('active',i===step-1); s.classList.toggle('done',i<step-1); });
-  // Mobile text
   document.getElementById('stepMobileNum').textContent=step;
   document.getElementById('stepMobileName').textContent=STEP_NAMES[step-1]||'';
-  // Back button: hide on step 1
   document.getElementById('backBtn').style.display=step<=1?'none':'inline-flex';
 }
 
@@ -892,9 +926,7 @@ function setStep(n,direction){
   });
   updateStepIndicator();
   if(step===2){
-    setTimeout(()=>{
-      buildPricingTable();
-    },150);
+    setTimeout(()=>{ buildPricingTable(); },150);
   }
 
   if(step===9){
@@ -902,8 +934,6 @@ function setStep(n,direction){
     const dayNames=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
     let html='';
     html+='<table class="review-table">';
-
-    // Each row has an Edit link that jumps back to that step
     html+=`<tr><td>Vehicle <span class="edit-link" onclick="setStep(1,'back')">Edit</span></td><td><strong>${selectedVehicleName||'—'}</strong></td></tr>`;
     if(d){
       const sd=dayNames[d.start.getDay()], ed=dayNames[addDays(d.end,1).getDay()];
@@ -959,7 +989,6 @@ function validatePaymentFields(){
   const ct=detectCardType(cardNumber);
   if(!cvv||!validateCVV(cvv,ct)){ document.getElementById('cardCVVError').textContent=!cvv?'CVV required':(ct==='amex'?'CVV must be 4 digits':'CVV must be 3 digits'); document.getElementById('cardCVV').classList.add('error'); ok=false; }
   if(!cardholderName){ document.getElementById('cardNameError').textContent='Cardholder name required'; document.getElementById('cardName').classList.add('error'); ok=false; }
-  // T&Cs
   if(!document.getElementById('tcsAccepted').checked){
     document.getElementById('tcsError').style.display='block';
     document.getElementById('tcsRow').classList.add('highlight');
@@ -1048,7 +1077,6 @@ document.getElementById('nextBtn').addEventListener('click',async()=>{
     const data=await r.json().catch(()=>({}));
     if(!r.ok){ nextBtn.disabled=false; nextBtn.textContent=origText; nextBtn.style.opacity='1'; msg.textContent=data.error||('Failed (HTTP '+r.status+')'); msg.className='err'; return; }
 
-    // Show confirmation panel
     const d2=getSelectedDates();
     const dayNames=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
     const collDay=d2?dayNames[d2.start.getDay()]:'';
