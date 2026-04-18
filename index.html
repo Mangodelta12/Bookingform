@@ -20,13 +20,17 @@
   h2{font-size:24px;font-weight:700;margin-bottom:4px}
   .muted{color:var(--muted);font-size:14px}
 
-  /* Steps */
+  /* Steps — desktop pills */
   .steps{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0 24px}
   .step{display:flex;align-items:center;gap:7px;padding:7px 12px;border:1px solid var(--border);border-radius:999px;white-space:nowrap;font-size:13px;font-weight:500;transition:all .2s}
   .step .num{width:20px;height:20px;border-radius:50%;display:inline-grid;place-items:center;background:#f1f5f9;font-size:11px;font-weight:700}
   .step.active{border-color:var(--brand);background:#eef5ff;color:var(--brand)}
   .step.active .num{background:var(--brand);color:#fff}
   .step.done{opacity:.6}
+
+  /* Mobile step indicator */
+  .step-mobile{display:none;font-size:14px;font-weight:600;color:var(--muted);margin:12px 0 20px}
+  .step-mobile span{color:var(--brand)}
 
   /* Panels */
   .panel{display:none;animation:slideIn .35s ease-out}
@@ -53,7 +57,7 @@
   .form-group{margin-bottom:18px}
   .inline{display:flex;gap:12px;align-items:center}
 
-  /* Vehicle list — 2 columns of horizontal cards */
+  /* Vehicle list */
   .vehicle-list{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:12px}
   .vehicle{display:grid;grid-template-columns:220px 1fr;border:2px solid var(--border);border-radius:var(--radius);overflow:hidden;cursor:pointer;outline:none;transition:border-color .2s,box-shadow .2s,transform .15s;background:#fff;align-items:stretch}
   .vehicle:hover{border-color:#93c5fd;transform:translateY(-2px);box-shadow:0 4px 16px rgba(18,115,235,.1)}
@@ -76,6 +80,10 @@
   .legend-item{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:600}
   .legend-dot{width:14px;height:14px;border-radius:4px}
   #date-summary{padding:14px 16px;background:#eef5ff;border:2px solid var(--brand);border-radius:var(--radius);font-size:14px;font-weight:700;color:var(--brand);display:none;line-height:1.7;width:100%;text-align:left;margin-top:auto}
+
+  /* Live price preview on dates step */
+  #date-price-preview{padding:12px 16px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:var(--radius);font-size:14px;font-weight:600;color:#0f766e;display:none;margin-top:8px}
+
   .flatpickr-calendar.inline{margin:0 !important}
   .flatpickr-innerContainer{padding:4px 8px 8px !important}
 
@@ -135,6 +143,13 @@
   input.error{border-color:var(--err);box-shadow:0 0 0 3px rgba(185,28,28,.08)}
   .error-message{color:var(--err);font-size:12px;margin-top:5px}
 
+  /* T&Cs checkbox */
+  .tcs-row{display:flex;align-items:flex-start;gap:10px;padding:14px 16px;background:#f8fafc;border:1px solid var(--border);border-radius:10px;margin-top:16px}
+  .tcs-row input[type=checkbox]{width:18px;height:18px;accent-color:var(--brand);flex-shrink:0;margin-top:2px}
+  .tcs-row label{margin:0;font-weight:500;font-size:14px;cursor:pointer;line-height:1.5}
+  .tcs-row a{color:var(--brand)}
+  .tcs-row.highlight{border-color:var(--err);background:#fef2f2}
+
   /* Helpers */
   .microhint{margin-top:5px;font-size:12px;color:var(--muted);line-height:1.5}
   .dvla-actions{display:flex;gap:10px;align-items:center;margin-top:8px}
@@ -156,7 +171,19 @@
   .review-table{width:100%;border-collapse:collapse;margin-top:8px}
   .review-table td{padding:10px 12px;border-bottom:1px solid var(--border);font-size:14px;vertical-align:top}
   .review-table td:first-child{font-weight:600;color:#374151;width:140px}
+  .review-table .edit-link{float:right;font-size:12px;font-weight:600;color:var(--brand);cursor:pointer;text-decoration:underline;text-underline-offset:2px}
+  .review-table .edit-link:hover{opacity:.7}
   .review-total{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;background:#eef5ff;border-radius:10px;margin-top:12px;font-weight:700;font-size:16px;color:var(--brand)}
+
+  /* Confirmation panel */
+  .confirm-panel{text-align:center;padding:32px 20px;display:flex;flex-direction:column;align-items:center;gap:16px}
+  .confirm-icon{width:72px;height:72px;background:#f0fdf4;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:36px;border:2px solid #bbf7d0}
+  .confirm-panel h3{font-size:22px;font-weight:700;color:#0f766e}
+  .confirm-panel p{font-size:14px;color:var(--muted);max-width:480px;line-height:1.7}
+  .confirm-details{background:#f8fafc;border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;text-align:left;width:100%;max-width:500px}
+  .confirm-details table{width:100%;font-size:14px;border-collapse:collapse}
+  .confirm-details td{padding:6px 0;vertical-align:top}
+  .confirm-details td:first-child{font-weight:600;color:#374151;width:110px}
 
   /* DVLA / driver section spacing */
   .driver-block>*+*{margin-top:16px}
@@ -173,12 +200,15 @@
     .vehicle-list{grid-template-columns:1fr}
     .wrap{padding:12px}
     .card{padding:16px}
+    /* Hide pills on mobile, show text indicator */
+    .steps{display:none}
+    .step-mobile{display:block}
   }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <div class="card">
+  <div class="card" id="mainCard">
     <h2>Book a Vehicle</h2>
     <div id="status" class="muted" style="margin-bottom:4px">Checking backend...</div>
 
@@ -193,6 +223,9 @@
       <div class="step"><span class="num">8</span> Payment</div>
       <div class="step"><span class="num">9</span> Review &amp; submit</div>
     </div>
+
+    <!-- Mobile step indicator -->
+    <div class="step-mobile" id="stepMobile">Step <span id="stepMobileNum">1</span> of 9 — <span id="stepMobileName">Vehicle</span></div>
 
     <!-- Step 1: Vehicle -->
     <div id="panel-1" class="panel active">
@@ -226,6 +259,7 @@
               </div>
             </div>
             <div id="date-summary"></div>
+            <div id="date-price-preview"></div>
           </div>
         </div>
       </div>
@@ -276,9 +310,9 @@
           <label for="dvlaCode">DVLA check code</label>
           <div class="dvla-actions">
             <a class="link-btn" href="https://www.gov.uk/view-driving-licence" target="_blank" rel="noopener">🔗 Get your DVLA check code</a>
-            <input id="dvlaCode" placeholder="Paste code here (approx 8 characters)" maxlength="10" style="flex:1">
+            <input id="dvlaCode" placeholder="Paste 8-character code here" maxlength="10" style="flex:1">
           </div>
-          <div id="dvlaHint" class="microhint">This is the one-time code from the GOV.UK Share your driving licence service.</div>
+          <div id="dvlaHint" class="microhint">This is the one-time 8-character code from the GOV.UK Share your driving licence service.</div>
         </div>
 
         <div class="form-group">
@@ -315,7 +349,9 @@
             <input id="nomEmail" type="email" placeholder="driver@example.com">
           </div>
         </div>
-        <p class="microhint">We'll contact the nominated driver to provide their DVLA check code and licence number.</p>
+        <div style="padding:12px 16px;background:#eff6ff;border-left:4px solid #3b82f6;border-radius:6px;font-size:13px;color:#1e40af;line-height:1.6;margin-top:8px">
+          We'll send the nominated driver an email asking them to submit their DVLA check code and licence number before your rental starts.
+        </div>
       </div>
     </div>
 
@@ -390,6 +426,13 @@
           Your payment will be processed automatically 48 hours before your pickup time. You can cancel or modify your booking free of charge until then.
         </div>
       </div>
+
+      <!-- T&Cs acceptance -->
+      <div class="tcs-row" id="tcsRow">
+        <input type="checkbox" id="tcsAccepted">
+        <label for="tcsAccepted">I have read and agree to the <a href="#" onclick="return false">Terms &amp; Conditions</a> and <a href="#" onclick="return false">Rental Agreement</a>. I confirm that the driver holds a valid licence and meets all eligibility requirements.</label>
+      </div>
+      <div id="tcsError" class="error-message" style="display:none;margin-top:6px">You must accept the terms and conditions to continue.</div>
     </div>
 
     <!-- Step 9: Review & Submit -->
@@ -399,19 +442,26 @@
       <div id="msg" class="muted" style="margin-top:12px"></div>
     </div>
 
-    <div class="nav">
+    <div class="nav" id="navBar">
       <div class="left">
-        <button class="ghost" id="backBtn">← Back</button>
+        <button class="ghost" id="backBtn" style="display:none">← Back</button>
       </div>
       <div class="right">
         <button class="ghost" id="cancelBtn">Cancel</button>
         <button class="primary" id="nextBtn">Next →</button>
       </div>
     </div>
+  </div>
+</div>
 
-    <div class="summary-bar">
-      <button id="summaryToggle">Hide summary</button>
-      <div id="liveSummary" class="live-summary"><pre id="liveSummaryText">Nothing selected yet.</pre></div>
+<!-- Cancel confirmation modal (inline, not fixed-position) -->
+<div id="cancelModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:1000;align-items:center;justify-content:center">
+  <div style="background:#fff;border-radius:16px;padding:28px 24px;max-width:400px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.2)">
+    <h3 style="font-size:18px;font-weight:700;margin-bottom:8px">Cancel booking?</h3>
+    <p style="font-size:14px;color:var(--muted);margin-bottom:20px;line-height:1.6">All of your entered details will be lost. Are you sure you want to start over?</p>
+    <div style="display:flex;gap:10px;justify-content:flex-end">
+      <button class="ghost" id="cancelNo" style="padding:10px 20px">Keep editing</button>
+      <button class="primary" id="cancelYes" style="background:#b91c1c;padding:10px 20px">Yes, cancel</button>
     </div>
   </div>
 </div>
@@ -423,6 +473,8 @@ const FETCH_JSON = { mode:'cors', cache:'no-store', headers:{ 'Accept':'applicat
 const LOOKAHEAD_DAYS = 180, START_HOUR = 8;
 const VAT_RATE = 0.20;
 const IMAGE_BY_NAME = {};
+
+const STEP_NAMES = ['Vehicle','Dates','Your details','Driver\'s details','Insurance','Extras','Packaging','Payment','Review & submit'];
 
 const dmy = d => `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
 function at08(d){ const x=new Date(d); x.setHours(START_HOUR,0,0,0); return x; }
@@ -445,8 +497,13 @@ let fp;
     document.getElementById('status').style.color='#059669';
   }catch(e){
     const s=document.getElementById('status');
-    s.textContent='Backend unreachable: '+(e.message||e);
+    s.textContent='Backend unreachable: '+(e.message||e)+' — ';
     s.style.color='var(--err)';
+    const retryBtn=document.createElement('button');
+    retryBtn.textContent='Retry';
+    retryBtn.style.cssText='font-size:13px;padding:2px 10px;border:1px solid #b91c1c;border-radius:6px;background:#fff;color:#b91c1c;cursor:pointer;margin-left:4px';
+    retryBtn.onclick=()=>location.reload();
+    s.appendChild(retryBtn);
   }
 })();
 
@@ -470,7 +527,6 @@ async function loadData(){
   capacityByVeh.clear();
   for(const v of vehicles){ const cap=assets.filter(a=>a.group===v.name).length||0; capacityByVeh.set(v.id,cap>0?cap:1); }
 
-  // Vehicle specs lookup
   const VEHICLE_SPECS = {
     'Group A Car':                  { seats: 4, fuel: '55 mpg' },
     'Group A+ Car':                 { seats: 4, fuel: '46 mpg' },
@@ -505,7 +561,7 @@ async function loadData(){
     selectedVehicleId=tile.dataset.id; selectedVehicleName=tile.dataset.name;
     selectedVehiclePrice=Number(tile.dataset.price||0);
     selectedVehiclePricingTiers=JSON.parse(tile.dataset.pricingTiers||'{}');
-    updateLiveSummary(); refreshDisabledDates();
+    updateLiveSummary(); refreshDisabledDates(); updateDatePricePreview();
   }
   box.querySelectorAll('.vehicle').forEach(tile=>{
     tile.addEventListener('click',()=>selectTile(tile));
@@ -515,7 +571,7 @@ async function loadData(){
 
 fp=flatpickr('#calendar',{
   inline:true, mode:'range', minDate:'today', dateFormat:'d/m/Y',
-  onChange(){ updateLiveSummary(); updateDateSummary(); },
+  onChange(){ updateLiveSummary(); updateDateSummary(); updateDatePricePreview(); },
   onDayCreate(dObj,dStr,fp,dayElem){
     const now=new Date(); now.setHours(0,0,0,0);
     if(dayElem.dateObj<now){ dayElem.style.color='#d1d5db'; dayElem.style.cursor='not-allowed'; }
@@ -523,6 +579,16 @@ fp=flatpickr('#calendar',{
     else{ dayElem.style.backgroundColor='#dcfce7'; dayElem.style.color='#15803d'; dayElem.title='Available'; }
   }
 });
+
+function updateDatePricePreview(){
+  const el=document.getElementById('date-price-preview'); if(!el) return;
+  const d=getSelectedDates();
+  if(!d||!selectedVehicleName){ el.style.display='none'; return; }
+  const dailyRate=addVAT(getPriceForDays(d.days));
+  const baseTotal=addVAT(getPriceForDays(d.days)*d.days);
+  el.innerHTML=`💷 ${d.days} day${d.days>1?'s':''} × £${dailyRate.toFixed(2)}/day = <strong>£${baseTotal.toFixed(2)}</strong> vehicle cost (inc VAT)`;
+  el.style.display='block';
+}
 
 async function refreshDisabledDates(){
   if(!selectedVehicleId){ fp.set('disable',[]); return; }
@@ -631,8 +697,9 @@ const dvlaHint=document.getElementById('dvlaHint');
 dvlaInput.addEventListener('input',()=>{
   let val=dvlaInput.value.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,10);
   dvlaInput.value=val;
-  if(val&&(val.length<6||val.length>10)){ dvlaHint.classList.add('bad'); dvlaHint.textContent='That does not look right — DVLA codes are usually approx 8 characters.'; }
-  else{ dvlaHint.classList.remove('bad'); dvlaHint.textContent='One-time code from GOV.UK Share your driving licence service.'; }
+  // GOV.UK issues exactly 8-character codes
+  if(val&&val.length!==8){ dvlaHint.classList.add('bad'); dvlaHint.textContent='DVLA check codes are exactly 8 characters — please check your code.'; }
+  else{ dvlaHint.classList.remove('bad'); dvlaHint.textContent='This is the one-time 8-character code from the GOV.UK Share your driving licence service.'; }
 });
 function getDvlaCode(){ return (dvlaInput.value||'').trim().toUpperCase(); }
 
@@ -728,6 +795,16 @@ function updateDateSummary(){
   el.style.display='block';
 }
 
+function updateStepIndicator(){
+  // Desktop pills
+  document.querySelectorAll('.step').forEach((s,i)=>{ s.classList.toggle('active',i===step-1); s.classList.toggle('done',i<step-1); });
+  // Mobile text
+  document.getElementById('stepMobileNum').textContent=step;
+  document.getElementById('stepMobileName').textContent=STEP_NAMES[step-1]||'';
+  // Back button: hide on step 1
+  document.getElementById('backBtn').style.display=step<=1?'none':'inline-flex';
+}
+
 function setStep(n,direction){
   const prev=step; step=Math.max(1,Math.min(9,n));
   if(direction===undefined) direction=n>prev?'forward':'back';
@@ -735,37 +812,38 @@ function setStep(n,direction){
     p.classList.remove('active','slide-back');
     if(i===step-1){ if(direction==='back') p.classList.add('slide-back'); p.classList.add('active'); }
   });
-  document.querySelectorAll('.step').forEach((s,i)=>{ s.classList.toggle('active',i===step-1); s.classList.toggle('done',i<step-1); });
+  updateStepIndicator();
 
   if(step===9){
     const d=getSelectedDates(); const xs=getExtras(); const cost=calcTotal();
     const dayNames=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
     let html='';
     html+='<table class="review-table">';
-    html+=`<tr><td>Vehicle</td><td><strong>${selectedVehicleName||'—'}</strong></td></tr>`;
+
+    // Each row has an Edit link that jumps back to that step
+    html+=`<tr><td>Vehicle <span class="edit-link" onclick="setStep(1,'back')">Edit</span></td><td><strong>${selectedVehicleName||'—'}</strong></td></tr>`;
     if(d){
       const sd=dayNames[d.start.getDay()], ed=dayNames[addDays(d.end,1).getDay()];
       const sf=String(d.start.getDate()).padStart(2,'0')+'/'+String(d.start.getMonth()+1).padStart(2,'0')+'/'+d.start.getFullYear();
       const ef=String(addDays(d.end,1).getDate()).padStart(2,'0')+'/'+String(addDays(d.end,1).getMonth()+1).padStart(2,'0')+'/'+addDays(d.end,1).getFullYear();
-      html+=`<tr><td>Collection</td><td>08:00 ${sd} ${sf}</td></tr>`;
-      html+=`<tr><td>Return by</td><td>08:00 ${ed} ${ef}</td></tr>`;
-      html+=`<tr><td>Duration</td><td>${cost.days} day${cost.days>1?'s':''} @ £${cost.dailyRateGross.toFixed(2)}/day = £${cost.baseGross.toFixed(2)}</td></tr>`;
+      html+=`<tr><td>Dates <span class="edit-link" onclick="setStep(2,'back')">Edit</span></td><td>Collection: 08:00 ${sd} ${sf}<br>Return by: 08:00 ${ed} ${ef}<br>${cost.days} day${cost.days>1?'s':''} @ £${cost.dailyRateGross.toFixed(2)}/day = £${cost.baseGross.toFixed(2)}</td></tr>`;
     }
+    html+=`<tr><td>Your details <span class="edit-link" onclick="setStep(3,'back')">Edit</span></td><td>${esc(document.getElementById('name').value)}<br>${esc(document.getElementById('email').value)}<br>${esc(document.getElementById('phone').value)}</td></tr>`;
     const cdw=document.querySelector('input[name="cdw"]:checked');
     const cdwTitle=cdw?cdw.dataset.title:'—';
     const cdwPrice=cdw?addVAT(Number(cdw.dataset.price||0))*(d?d.days:1):0;
-    html+=`<tr><td>CDW</td><td>${cdwTitle}${cdwPrice>0?' <span style="color:var(--muted)">(£'+cdwPrice.toFixed(2)+' inc VAT)</span>':''}</td></tr>`;
+    html+=`<tr><td>CDW <span class="edit-link" onclick="setStep(5,'back')">Edit</span></td><td>${cdwTitle}${cdwPrice>0?' <span style="color:var(--muted)">(£'+cdwPrice.toFixed(2)+' inc VAT)</span>':''}</td></tr>`;
     const others=xs.filter(x=>!x.id.startsWith('cdw'));
-    html+=`<tr><td>Extras</td><td>${others.length?others.map(x=>`${x.title} — £${(addVAT(x.price)*(x.perDay?(d?d.days:1):1)).toFixed(2)}`).join('<br>'):'None'}</td></tr>`;
+    html+=`<tr><td>Extras <span class="edit-link" onclick="setStep(6,'back')">Edit</span></td><td>${others.length?others.map(x=>`${x.title} — £${(addVAT(x.price)*(x.perDay?(d?d.days:1):1)).toFixed(2)}`).join('<br>'):'None'}</td></tr>`;
     const packaging=getPackaging();
-    html+=`<tr><td>Packaging</td><td>${packaging.length?packaging.map(p=>`${p.name} (x${p.quantity}) — £${(addVAT(p.price)*p.quantity).toFixed(2)}`).join('<br>'):'None'}</td></tr>`;
+    html+=`<tr><td>Packaging <span class="edit-link" onclick="setStep(7,'back')">Edit</span></td><td>${packaging.length?packaging.map(p=>`${p.name} (x${p.quantity}) — £${(addVAT(p.price)*p.quantity).toFixed(2)}`).join('<br>'):'None'}</td></tr>`;
     const mode=getDriverMode();
     if(mode==='self'){
       const dvla=getDvlaCode(),lic=getLicenceNo();
-      html+=`<tr><td>Driver</td><td>Self<br><span style="color:var(--muted);font-size:13px">DVLA: ${dvla?maskLeading(dvla,5):(noDvlaCode.checked?'Unable to generate':'—')}</span><br><span style="color:var(--muted);font-size:13px">Licence: ${lic?maskLeading(lic,8):(nonUkLicence.checked?'Non-UK (present on collection)':'—')}</span></td></tr>`;
+      html+=`<tr><td>Driver <span class="edit-link" onclick="setStep(4,'back')">Edit</span></td><td>Self<br><span style="color:var(--muted);font-size:13px">DVLA: ${dvla?maskLeading(dvla,5):(noDvlaCode.checked?'Unable to generate':'—')}</span><br><span style="color:var(--muted);font-size:13px">Licence: ${lic?maskLeading(lic,8):(nonUkLicence.checked?'Non-UK (present on collection)':'—')}</span></td></tr>`;
     } else {
       const nm=getNominee();
-      html+=`<tr><td>Driver</td><td>Nominated: ${nm.name||'—'} ${nm.email?`&lt;${nm.email}&gt;`:''}</td></tr>`;
+      html+=`<tr><td>Driver <span class="edit-link" onclick="setStep(4,'back')">Edit</span></td><td>Nominated: ${nm.name||'—'} ${nm.email?`&lt;${nm.email}&gt;`:''}</td></tr>`;
     }
     html+='</table>';
     html+=`<div class="review-total"><span>Subtotal (ex VAT):</span><span>£${cost.totalNet.toFixed(2)}</span></div>`;
@@ -798,8 +876,22 @@ function validatePaymentFields(){
   const ct=detectCardType(cardNumber);
   if(!cvv||!validateCVV(cvv,ct)){ document.getElementById('cardCVVError').textContent=!cvv?'CVV required':(ct==='amex'?'CVV must be 4 digits':'CVV must be 3 digits'); document.getElementById('cardCVV').classList.add('error'); ok=false; }
   if(!cardholderName){ document.getElementById('cardNameError').textContent='Cardholder name required'; document.getElementById('cardName').classList.add('error'); ok=false; }
+  // T&Cs
+  if(!document.getElementById('tcsAccepted').checked){
+    document.getElementById('tcsError').style.display='block';
+    document.getElementById('tcsRow').classList.add('highlight');
+    ok=false;
+  } else {
+    document.getElementById('tcsError').style.display='none';
+    document.getElementById('tcsRow').classList.remove('highlight');
+  }
   return ok;
 }
+
+document.getElementById('tcsAccepted').addEventListener('change',()=>{
+  document.getElementById('tcsError').style.display='none';
+  document.getElementById('tcsRow').classList.remove('highlight');
+});
 
 function setupPaymentInputs(){
   const cn=document.getElementById('cardNumber'); const ce=document.getElementById('cardExpiry'); const cc=document.getElementById('cardCVV');
@@ -810,8 +902,20 @@ function setupPaymentInputs(){
 }
 setTimeout(setupPaymentInputs,500);
 
+// Cancel modal
+document.getElementById('cancelBtn').addEventListener('click',()=>{
+  document.getElementById('cancelModal').style.display='flex';
+});
+document.getElementById('cancelNo').addEventListener('click',()=>{
+  document.getElementById('cancelModal').style.display='none';
+});
+document.getElementById('cancelYes').addEventListener('click',()=>{ location.reload(); });
+document.getElementById('cancelModal').addEventListener('click',e=>{
+  if(e.target===document.getElementById('cancelModal')) document.getElementById('cancelModal').style.display='none';
+});
+
 document.getElementById('backBtn').addEventListener('click',()=>setStep(step-1,'back'));
-document.getElementById('cancelBtn').addEventListener('click',()=>location.reload());
+
 document.getElementById('nextBtn').addEventListener('click',async()=>{
   if(step===1){ if(!selectedVehicleId){ alert('Please select a vehicle.'); return; } setStep(2); return; }
   if(step===2){ if(!getSelectedDates()){ alert('Please select your dates.'); return; } setStep(3); return; }
@@ -860,15 +964,40 @@ document.getElementById('nextBtn').addEventListener('click',async()=>{
     const r=await fetch(API_BASE+'/api/bookings',{method:'POST',...FETCH_JSON,body:JSON.stringify(body)});
     const data=await r.json().catch(()=>({}));
     if(!r.ok){ nextBtn.disabled=false; nextBtn.textContent=origText; nextBtn.style.opacity='1'; msg.textContent=data.error||('Failed (HTTP '+r.status+')'); msg.className='err'; return; }
-    nextBtn.textContent='Booking confirmed ✓';
-    msg.textContent='Booking confirmed: '+new Date(data.start).toLocaleString()+' → '+new Date(data.end).toLocaleString();
-    msg.className='ok';
+
+    // Show confirmation panel
+    const d2=getSelectedDates();
+    const dayNames=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    const collDay=d2?dayNames[d2.start.getDay()]:'';
+    const collDate=d2?dmy(d2.start):'';
+    const retDay=d2?dayNames[addDays(d2.end,1).getDay()]:'';
+    const retDate=d2?dmy(addDays(d2.end,1)):'';
+    const custName=esc(document.getElementById('name').value||'');
+    const custEmail=esc(document.getElementById('email').value||'');
+
+    document.getElementById('mainCard').innerHTML=`
+      <div class="confirm-panel">
+        <div class="confirm-icon">✓</div>
+        <h3>Booking confirmed!</h3>
+        <p>Thanks, <strong>${custName}</strong>. Your booking has been received. A confirmation email will be sent to <strong>${custEmail}</strong>. Please check your inbox (and spam folder) shortly.</p>
+        <div class="confirm-details">
+          <table>
+            <tr><td>Vehicle</td><td>${esc(selectedVehicleName||'—')}</td></tr>
+            <tr><td>Collection</td><td>08:00 ${collDay} ${collDate}</td></tr>
+            <tr><td>Return by</td><td>08:00 ${retDay} ${retDate}</td></tr>
+            <tr><td>Total paid</td><td><strong>£${cost.totalGross.toFixed(2)} inc VAT</strong></td></tr>
+            ${data.id?`<tr><td>Reference</td><td><code style="font-size:13px">${esc(data.id)}</code></td></tr>`:''}
+          </table>
+        </div>
+        <p style="font-size:13px;color:var(--muted)">Your payment will be processed 48 hours before collection. If you need to make changes, please contact us with your booking reference.</p>
+        <button class="primary" onclick="location.reload()" style="margin-top:8px">Make another booking</button>
+      </div>`;
   }catch(e){ nextBtn.disabled=false; nextBtn.textContent=origText; nextBtn.style.opacity='1'; msg.textContent='Network error: '+(e.message||e); msg.className='err'; }
 });
 
 (async function init(){
   await loadData(); await loadInsurance(); await loadExtras(); await loadPackaging();
-  setDriverMode('self'); updateLiveSummary();
+  setDriverMode('self'); updateLiveSummary(); updateStepIndicator();
 })();
 </script>
 </body>
