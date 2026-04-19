@@ -69,14 +69,11 @@
   .vehicle .price{color:var(--brand);font-size:14px;font-weight:600}
   .vehicle .vehicle-arrow{font-size:18px;color:#d1d5db;margin-top:auto;align-self:flex-end}
 
-  /* Date panel — 3 column layout */
-  .date-3col{display:grid;grid-template-columns:auto 1fr 1fr;gap:20px;align-items:start;margin-top:8px}
-  /* Calendar column: same card styling as info cards so all three boxes are visually uniform */
+  /* Date panel — 2 column layout: calendar | info */
+  .date-2col{display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:start;margin-top:8px}
+  /* Calendar column: card-styled box, self-contained */
   .date-col-calendar{display:flex;flex-direction:column;align-self:start;background:#f8fafc;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
-  /* Pricing and info columns stretch to the height of the tallest sibling */
-  .date-col-pricing{display:flex;flex-direction:column;align-self:stretch}
-  .date-col-pricing .date-info-card{flex:1;display:flex;flex-direction:column}
-  /* Info column stretches to match pricing column height, items stack naturally from top */
+  /* Info column: stretches to match calendar height, cards stack from top */
   .date-col-info{display:flex;flex-direction:column;gap:12px;align-self:stretch}
   .date-info-card{background:#f8fafc;border:1px solid var(--border);border-radius:var(--radius);padding:16px}
   .date-info-card h4{font-size:14px;font-weight:700;margin-bottom:8px;color:#374151}
@@ -206,14 +203,11 @@
   .checkbox-row label{margin:0;font-weight:500;font-size:14px;cursor:pointer}
 
   @media(max-width:1024px){
-    .date-3col{grid-template-columns:auto 1fr;grid-template-rows:auto auto}
-    .date-col-info{grid-column:1/-1;flex-direction:row;flex-wrap:wrap}
-    .date-col-info .date-info-card{flex:1;min-width:200px}
+    .date-2col{grid-template-columns:auto 1fr}
   }
-  @media(max-width:900px){
+  @media(max-width:700px){
     .vehicle-list{grid-template-columns:1fr}
-    .date-3col{grid-template-columns:1fr}
-    .date-col-info{flex-direction:column}
+    .date-2col{grid-template-columns:1fr}
     .row{grid-template-columns:1fr}
   }
   @media(max-width:600px){
@@ -256,36 +250,14 @@
     <!-- Step 2: Dates -->
     <div id="panel-2" class="panel">
       <div class="section-label">Select Booking Dates</div>
-      <div class="date-3col">
+      <div class="date-2col">
 
         <!-- Col 1: Calendar -->
         <div class="date-col-calendar">
           <div id="calendar"></div>
         </div>
 
-        <!-- Col 2: Pricing table -->
-        <div class="date-col-pricing">
-          <div class="date-info-card" id="pricingTableCard" style="height:100%">
-            <h4>💰 Hire duration pricing</h4>
-            <p id="pricingTableEmpty" style="font-size:13px;color:var(--muted);margin-top:6px">Select a vehicle on the previous step to see pricing.</p>
-            <div id="pricingTableWrap" style="display:none;margin-top:10px">
-              <table class="pricing-table" id="pricingTable">
-                <thead>
-                  <tr>
-                    <th>Days</th>
-                    <th>Total (ex VAT)</th>
-                    <th>Per day (ex VAT)</th>
-                    <th>Saving</th>
-                  </tr>
-                </thead>
-                <tbody id="pricingTableBody"></tbody>
-              </table>
-              <p style="font-size:11px;color:var(--muted);margin-top:8px;line-height:1.5">Saving vs hiring at the 1-day rate each time. VAT added at checkout.</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Col 3: Info cards + date summary -->
+        <!-- Col 2: Info cards + date summary -->
         <div class="date-col-info">
           <div class="date-info-card">
             <h4>📅 Collection &amp; Return Times</h4>
