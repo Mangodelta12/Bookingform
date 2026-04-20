@@ -615,6 +615,7 @@ async function loadData(){
 
 fp=flatpickr('#calendar',{
   inline:true, mode:'range', minDate:'today', dateFormat:'d/m/Y',
+  locale: { firstDayOfWeek: 1 },
   onChange(){ updateLiveSummary(); updateDateSummary(); highlightPricingRow(); },
   onDayCreate(dObj,dStr,fp,dayElem){
     const now=new Date(); now.setHours(0,0,0,0);
