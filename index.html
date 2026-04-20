@@ -916,7 +916,10 @@ function updateDateSummary(){
   const el=document.getElementById('date-summary'); if(!el) return;
   const d=getSelectedDates(); if(!d){ el.style.display='none'; return; }
   const days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-  const sd=days[d.start.getDay()], ed=days[addDays(d.end,1).getDay()];
+  const startLocal = new Date(d.start.getFullYear(), d.start.getMonth(), d.start.getDate());
+const endLocal = addDays(d.end, 1);
+const endLocalFixed = new Date(endLocal.getFullYear(), endLocal.getMonth(), endLocal.getDate());
+const sd = days[startLocal.getDay()], ed = days[endLocalFixed.getDay()];
   const sf=String(d.start.getDate()).padStart(2,'0')+'/'+String(d.start.getMonth()+1).padStart(2,'0')+'/'+d.start.getFullYear();
   const ef=String(addDays(d.end,1).getDate()).padStart(2,'0')+'/'+String(addDays(d.end,1).getMonth()+1).padStart(2,'0')+'/'+addDays(d.end,1).getFullYear();
   el.innerHTML=`📅 <strong>Collection:</strong> 08:00 ${sd} ${sf}<br>🔁 <strong>Return by:</strong> 08:00 ${ed} ${ef}`;
