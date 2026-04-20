@@ -626,7 +626,17 @@ async function loadData(){
   if(imgSrc){ thumb.src=imgSrc.src; thumb.style.display='block'; }
   else{ thumb.style.display='none'; }
   namEl.textContent=selectedVehicleName;
-  priceEl.textContent='From £'+getDay1Price(vehicles.find(v=>v.id===selectedVehicleId)).toFixed(2)+'/day inc VAT';
+  const selectedV=vehicles.find(v=>v.id===selectedVehicleId);
+  const tiers=selectedVehiclePricingTiers||{};
+  const keys=Object.keys(tiers).map(Number).sort((a,b)=>a-b);
+  const maxKey=keys.length?keys[keys.length-1]:0;
+  const day1=getDay1Price(selectedV);
+  const day7=maxKey>=7?addVAT(tiers[7]):null;
+  const dayMax=maxKey>0?addVAT(tiers[maxKey]):null;
+  let priceSummary='From £'+day1.toFixed(2)+'/day inc VAT';
+  if(day7) priceSummary+=' · 7 days: £'+day7.toFixed(2);
+  if(dayMax && maxKey!==7) priceSummary+=' · '+maxKey+' days: £'+dayMax.toFixed(2);
+  priceEl.textContent=priceSummary;
   card.style.display='block';
 
   updateLiveSummary(); refreshDisabledDates(); buildPricingTable();
