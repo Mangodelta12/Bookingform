@@ -634,7 +634,7 @@ async function loadData(){
   const day7=maxKey>=7?addVAT(tiers[7]):null;
   const dayMax=maxKey>0?addVAT(tiers[maxKey]):null;
   let priceSummary='From £'+day1.toFixed(2)+'/day inc VAT';
-  if(day7) priceSummary+=' · 7 days: £'+day7.toFixed(2);
+  if(day7) priceSummary+=' · 7 days: £'+(day7*7).toFixed(2);
   if(dayMax && maxKey!==7) priceSummary+=' · '+maxKey+' days: £'+dayMax.toFixed(2);
   priceEl.textContent=priceSummary;
   card.style.display='block';
