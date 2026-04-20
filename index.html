@@ -950,16 +950,26 @@ function updateDateSummary(){
   const el=document.getElementById('date-summary'); if(!el) return;
   const d=getSelectedDates(); if(!d){ el.style.display='none'; return; }
   const days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-  const startLocal = new Date(d.start.getFullYear(), d.start.getMonth(), d.start.getDate());
-const endLocal = addDays(d.end, 1);
-const endLocalFixed = new Date(endLocal.getFullYear(), endLocal.getMonth(), endLocal.getDate());
-const sd = days[startLocal.getDay()], ed = days[endLocalFixed.getDay()];
+  const startLocal=new Date(d.start.getFullYear(),d.start.getMonth(),d.start.getDate());
+  const endLocal=addDays(d.end,1);
+  const endLocalFixed=new Date(endLocal.getFullYear(),endLocal.getMonth(),endLocal.getDate());
+  const sd=days[startLocal.getDay()], ed=days[endLocalFixed.getDay()];
   const sf=String(d.start.getDate()).padStart(2,'0')+'/'+String(d.start.getMonth()+1).padStart(2,'0')+'/'+d.start.getFullYear();
   const ef=String(addDays(d.end,1).getDate()).padStart(2,'0')+'/'+String(addDays(d.end,1).getMonth()+1).padStart(2,'0')+'/'+addDays(d.end,1).getFullYear();
   el.innerHTML=`📅 <strong>Collection:</strong> 08:00 ${sd} ${sf}<br>🔁 <strong>Return by:</strong> 08:00 ${ed} ${ef}`;
   el.style.display='block';
-}
 
+  // Update price summary in selected vehicle card
+  const priceEl=document.getElementById('selected-vehicle-card-price');
+  if(priceEl && selectedVehicleId){
+    const cost=calcTotal();
+    const dailyRate=cost.dailyRateGross.toFixed(2);
+    const total=cost.baseGross.toFixed(2);
+    priceEl.innerHTML=
+      '<strong>'+d.days+' day'+(d.days>1?'s':'')+' @ £'+dailyRate+'/day</strong>'+
+      '<br>Vehicle total: <strong style="color:var(--brand)">£'+total+' inc VAT</strong>';
+  }
+}
 function updateStepIndicator(){
   document.querySelectorAll('.step').forEach((s,i)=>{ s.classList.toggle('active',i===step-1); s.classList.toggle('done',i<step-1); });
   document.getElementById('stepMobileNum').textContent=step;
