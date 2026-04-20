@@ -218,7 +218,36 @@
     /* Hide pills on mobile, show text indicator */
     .steps{display:none}
     .step-mobile{display:block}
+    @media(max-width:600px){
+    .vehicle-list{grid-template-columns:1fr}
+    .wrap{padding:12px}
+    .card{padding:16px}
+    /* Hide pills on mobile, show text indicator */
+    .steps{display:none}
+    .step-mobile{display:block}
   }
+  .highlight-input-group{
+    background:#eff6ff !important;
+    border:2px solid #3b82f6 !important;
+    border-radius:12px !important;
+    padding:16px !important;
+    margin-bottom:16px;
+  }
+  .highlight-input-group label{
+    color:#1e40af !important;
+    font-weight:700;
+  }
+  .highlight-input-group input{
+    border-color:#3b82f6 !important;
+  }
+  .highlight-input-group .microhint{
+    color:#1e40af !important;
+  }
+  .highlight-input-group .link-btn{
+    background:#3b82f6 !important;
+    color:#fff !important;
+    border-color:#3b82f6 !important;
+    }
 </style>
 </head>
 <body>
