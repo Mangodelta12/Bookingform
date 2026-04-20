@@ -872,6 +872,18 @@ nonUkLicence.addEventListener('change',()=>{
   updateLiveSummary();
 });
 
+document.getElementById('nonUkConvictionsYes').addEventListener('change',()=>{
+  document.getElementById('nonUkConvictionsDetail').style.display='block';
+});
+document.getElementById('nonUkConvictionsNo').addEventListener('change',()=>{
+  document.getElementById('nonUkConvictionsDetail').style.display='none';
+});
+document.getElementById('nonUkAccidentsYes').addEventListener('change',()=>{
+  document.getElementById('nonUkAccidentsDetail').style.display='block';
+});
+document.getElementById('nonUkAccidentsNo').addEventListener('change',()=>{
+  document.getElementById('nonUkAccidentsDetail').style.display='none';
+});
 function getDriverMode(){ return selfDrivingToggle.checked?'self':'nominee'; }
 function getNominee(){ return {name:(nomName.value||'').trim(),email:(nomEmail.value||'').trim()}; }
 function maskLeading(s,n){ if(!s) return ''; return '•'.repeat(Math.min(n,s.length))+s.slice(n); }
