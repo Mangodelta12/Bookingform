@@ -334,20 +334,37 @@
       </div>
 
       <div id="selfDriverBlock" class="driver-block">
-        <div class="form-group">
-          <label for="dvlaCode">DVLA check code</label>
+        <div class="form-group" style="background:#eff6ff;border:2px solid #3b82f6;border-radius:12px;padding:16px">
+          <label for="dvlaCode" style="color:#1e40af">DVLA Check Code</label>
           <div class="dvla-actions">
-            <a class="link-btn" href="https://www.gov.uk/view-driving-licence" target="_blank" rel="noopener">🔗 Get your DVLA check code</a>
-            <input id="dvlaCode" placeholder="Paste 8-character code here" maxlength="10" style="flex:1">
+            <a class="link-btn" href="https://www.gov.uk/view-driving-licence" target="_blank" rel="noopener" style="background:#3b82f6;color:#fff;border-color:#3b82f6">🔗 Get your DVLA check code</a>
+            <input id="dvlaCode" placeholder="Paste 8-character code here" maxlength="10" style="flex:1;border-color:#3b82f6">
           </div>
-          <div id="dvlaHint" class="microhint">This is the one-time 8-character code from the GOV.UK Share your driving licence service.</div>
+          <div id="dvlaHint" class="microhint" style="color:#1e40af">This is the one-time 8-character code from the GOV.UK Share your driving licence service.</div>
         </div>
 
-        <div class="form-group">
-          <label for="licenceNo">Driving licence number <span style="font-weight:400;color:var(--muted)">(letters &amp; digits, max 18)</span></label>
-          <input id="licenceNo" placeholder="e.g. DOEJX801010A99BC" maxlength="18">
-          <div class="microhint">We'll mask this on the review screen (first 8 characters).</div>
+        <div class="form-group" style="background:#eff6ff;border:2px solid #3b82f6;border-radius:12px;padding:16px;margin-top:12px">
+          <label for="licenceNo" style="color:#1e40af">Driving Licence Number <span style="font-weight:400;color:#3b82f6">(letters &amp; digits, max 18)</span></label>
+          <input id="licenceNo" placeholder="e.g. DOEJX801010A99BC" maxlength="18" style="border-color:#3b82f6">
+          <div class="microhint" style="color:#1e40af">We'll mask this on the review screen (first 8 characters).</div>
         </div>
+
+        <div class="checkbox-row">
+          <input type="checkbox" id="noDvlaCode">
+          <label for="noDvlaCode">Unable to generate a check code?</label>
+        </div>
+        <div id="noDvlaMsg" class="microhint" style="display:none;background:#fef3c7;border:1px solid #fcd34d;border-radius:8px;padding:10px 14px;margin-top:4px">
+          If you are unable to generate a code, please tick this box. Please ensure we have the driver's licence number and DVLA code before your rental starts to avoid delays on collection.
+        </div>
+
+        <div class="checkbox-row">
+          <input type="checkbox" id="nonUkLicence">
+          <label for="nonUkLicence">Non UK licence holder</label>
+        </div>
+        <div id="nonUkMsg" class="microhint" style="display:none;background:#fef3c7;border:1px solid #fcd34d;border-radius:8px;padding:10px 14px;margin-top:4px">
+          For non UK licence holders. Drivers must be over 25 and under 75. Present your licence on collection of vehicle.
+        </div>
+      </div>
 
         <div class="checkbox-row">
           <input type="checkbox" id="noDvlaCode">
