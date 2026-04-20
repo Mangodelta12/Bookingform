@@ -197,35 +197,12 @@
   .confirm-details td{padding:6px 0;vertical-align:top}
   .confirm-details td:first-child{font-weight:600;color:#374151;width:110px}
 
-  /* DVLA / driver section spacing */
+ /* DVLA / driver section spacing */
   .driver-block>*+*{margin-top:16px}
   .checkbox-row{display:flex;align-items:center;gap:10px;padding:10px 0}
   .checkbox-row input[type=checkbox]{width:18px;height:18px;accent-color:var(--brand);flex-shrink:0;margin:0}
   .checkbox-row label{margin:0;font-weight:500;font-size:14px;cursor:pointer}
 
-  @media(max-width:1024px){
-    .date-2col{grid-template-columns:auto 1fr}
-  }
-  @media(max-width:700px){
-    .vehicle-list{grid-template-columns:1fr}
-    .date-2col{grid-template-columns:1fr}
-    .row{grid-template-columns:1fr}
-  }
-  @media(max-width:600px){
-    .vehicle-list{grid-template-columns:1fr}
-    .wrap{padding:12px}
-    .card{padding:16px}
-    /* Hide pills on mobile, show text indicator */
-    .steps{display:none}
-    .step-mobile{display:block}
-    @media(max-width:600px){
-    .vehicle-list{grid-template-columns:1fr}
-    .wrap{padding:12px}
-    .card{padding:16px}
-    /* Hide pills on mobile, show text indicator */
-    .steps{display:none}
-    .step-mobile{display:block}
-  }
   .highlight-input-group{
     background:#eff6ff !important;
     border:2px solid #3b82f6 !important;
@@ -247,7 +224,23 @@
     background:#3b82f6 !important;
     color:#fff !important;
     border-color:#3b82f6 !important;
-    }
+  }
+
+  @media(max-width:1024px){
+    .date-2col{grid-template-columns:auto 1fr}
+  }
+  @media(max-width:700px){
+    .vehicle-list{grid-template-columns:1fr}
+    .date-2col{grid-template-columns:1fr}
+    .row{grid-template-columns:1fr}
+  }
+  @media(max-width:600px){
+    .vehicle-list{grid-template-columns:1fr}
+    .wrap{padding:12px}
+    .card{padding:16px}
+    .steps{display:none}
+    .step-mobile{display:block}
+  }
 </style>
 </head>
 <body>
