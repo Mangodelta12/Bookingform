@@ -609,16 +609,28 @@ async function loadData(){
   }).join('');
 
   function selectTile(tile){
-    box.querySelectorAll('.vehicle').forEach(t=>t.classList.remove('selected'));
-    tile.classList.add('selected');
-    selectedVehicleId=tile.dataset.id;
-    selectedVehicleName=tile.dataset.name;
-    selectedVehiclePrice=Number(tile.dataset.price||0);
-    // Normalise tiers: detect and convert total-price tiers to per-day rates
-    const rawTiers=JSON.parse(tile.dataset.pricingTiers||'{}');
-    selectedVehiclePricingTiers=normaliseTiers(rawTiers);
-    updateLiveSummary(); refreshDisabledDates(); buildPricingTable();
-  }
+  box.querySelectorAll('.vehicle').forEach(t=>t.classList.remove('selected'));
+  tile.classList.add('selected');
+  selectedVehicleId=tile.dataset.id;
+  selectedVehicleName=tile.dataset.name;
+  selectedVehiclePrice=Number(tile.dataset.price||0);
+  const rawTiers=JSON.parse(tile.dataset.pricingTiers||'{}');
+  selectedVehiclePricingTiers=normaliseTiers(rawTiers);
+
+  // Update selected vehicle card on date step
+  const card=document.getElementById('selected-vehicle-card');
+  const thumb=document.getElementById('selected-vehicle-thumb');
+  const namEl=document.getElementById('selected-vehicle-card-name');
+  const priceEl=document.getElementById('selected-vehicle-card-price');
+  const imgSrc=tile.querySelector('.thumb img');
+  if(imgSrc){ thumb.src=imgSrc.src; thumb.style.display='block'; }
+  else{ thumb.style.display='none'; }
+  namEl.textContent=selectedVehicleName;
+  priceEl.textContent='From £'+getDay1Price(vehicles.find(v=>v.id===selectedVehicleId)).toFixed(2)+'/day inc VAT';
+  card.style.display='block';
+
+  updateLiveSummary(); refreshDisabledDates(); buildPricingTable();
+}
   box.querySelectorAll('.vehicle').forEach(tile=>{
     tile.addEventListener('click',()=>selectTile(tile));
     tile.addEventListener('keydown',e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); selectTile(tile); } });
