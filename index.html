@@ -390,8 +390,49 @@
           <input type="checkbox" id="nonUkLicence">
           <label for="nonUkLicence">Non UK licence holder</label>
         </div>
-        <div id="nonUkMsg" class="microhint" style="display:none;background:#fef3c7;border:1px solid #fcd34d;border-radius:8px;padding:10px 14px;margin-top:4px">
-          For non UK licence holders. Drivers must be over 25 and under 75. Present your licence on collection of vehicle.
+        <div id="nonUkMsg" style="display:none;background:#fef3c7;border:2px solid #fcd34d;border-radius:12px;padding:16px;margin-top:8px">
+          <p style="font-size:13px;color:#92400e;margin-bottom:16px;font-weight:600">For non UK licence holders. Drivers must be over 25 and under 75. Please complete the details below — your licence will be verified on collection.</p>
+          <div class="row" style="margin-bottom:12px">
+            <div class="form-group">
+              <label for="nonUkCountry" style="color:#92400e">Country of Licence Issue</label>
+              <input id="nonUkCountry" placeholder="e.g. France, Germany..." style="border-color:#fcd34d">
+            </div>
+            <div class="form-group">
+              <label for="nonUkAge" style="color:#92400e">Driver's Age</label>
+              <input id="nonUkAge" type="number" min="25" max="75" placeholder="Must be 25-75" style="border-color:#fcd34d">
+            </div>
+          </div>
+          <div class="row" style="margin-bottom:12px">
+            <div class="form-group">
+              <label style="color:#92400e">Driving Convictions?</label>
+              <div style="display:flex;gap:16px;margin-top:8px">
+                <label style="display:flex;align-items:center;gap:8px;font-weight:500;cursor:pointer">
+                  <input type="radio" name="nonUkConvictions" id="nonUkConvictionsNo" value="no" checked style="width:18px;height:18px;accent-color:#f59e0b"> No
+                </label>
+                <label style="display:flex;align-items:center;gap:8px;font-weight:500;cursor:pointer">
+                  <input type="radio" name="nonUkConvictions" id="nonUkConvictionsYes" value="yes" style="width:18px;height:18px;accent-color:#f59e0b"> Yes
+                </label>
+              </div>
+              <div id="nonUkConvictionsDetail" style="display:none;margin-top:8px">
+                <textarea id="nonUkConvictionsText" placeholder="Please provide details of convictions..." style="border-color:#fcd34d;min-height:60px"></textarea>
+              </div>
+            </div>
+            <div class="form-group">
+              <label style="color:#92400e">Accidents in Last 5 Years?</label>
+              <div style="display:flex;gap:16px;margin-top:8px">
+                <label style="display:flex;align-items:center;gap:8px;font-weight:500;cursor:pointer">
+                  <input type="radio" name="nonUkAccidents" id="nonUkAccidentsNo" value="no" checked style="width:18px;height:18px;accent-color:#f59e0b"> No
+                </label>
+                <label style="display:flex;align-items:center;gap:8px;font-weight:500;cursor:pointer">
+                  <input type="radio" name="nonUkAccidents" id="nonUkAccidentsYes" value="yes" style="width:18px;height:18px;accent-color:#f59e0b"> Yes
+                </label>
+              </div>
+              <div id="nonUkAccidentsDetail" style="display:none;margin-top:8px">
+                <textarea id="nonUkAccidentsText" placeholder="Please provide details of accidents..." style="border-color:#fcd34d;min-height:60px"></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
         </div>
       </div>
 
