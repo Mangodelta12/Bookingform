@@ -72,7 +72,7 @@
   /* Date panel — 2 column layout: calendar | info */
   .date-2col{display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:start;margin-top:8px}
   /* Calendar column: card-styled box, self-contained */
-  .date-col-calendar{display:flex;flex-direction:column;align-self:start;background:#f8fafc;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+  .date-col-calendar{display:flex;flex-direction:column;align-self:start;background:#f8fafc;border:1px solid var(--border);border-radius:var(--radius);overflow:visible;min-width:410px}
   /* Info column: stretches to match calendar height, cards stack from top */
   .date-col-info{display:flex;flex-direction:column;gap:12px;align-self:stretch}
   .date-info-card{background:#f8fafc;border:1px solid var(--border);border-radius:var(--radius);padding:16px}
@@ -97,11 +97,10 @@
 
   /* Calendar overrides — sits inside its own card div now, no extra shadow needed */
   .flatpickr-calendar.inline{margin:0 !important;margin-top:0 !important}
-.flatpickr-calendar{box-shadow:none !important;border:none !important;border-radius:0 !important;overflow:visible!important;width:380px!important}
-.flatpickr-calendar.inline{position:relative!important;top:auto!important;display:block!important}
-.flatpickr-rContainer{width:380px!important}
-.flatpickr-days{width:380px!important}
-.dayContainer{width:380px!important;min-width:380px!important;max-width:380px!important}
+.flatpickr-calendar{box-shadow:none !important;border:none !important;border-radius:0 !important;overflow:visible!important;width:400px!important}
+.flatpickr-rContainer{width:400px!important}
+.flatpickr-days{width:400px!important}
+.dayContainer{width:400px!important;min-width:400px!important;max-width:400px!important}
 .flatpickr-day{width:50px!important;max-width:50px!important;height:50px!important;line-height:50px!important;margin:2px!important}
 .flatpickr-day.selected,.flatpickr-day.startRange,.flatpickr-day.endRange,.flatpickr-day.inRange{background:var(--brand)!important;border-color:var(--brand)!important;color:#fff!important}
 .flatpickr-innerContainer{padding:4px 8px 8px !important}
