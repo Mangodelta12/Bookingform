@@ -1203,7 +1203,19 @@ document.getElementById('nextBtn').addEventListener('click',async()=>{
     } else { const nm=getNominee(); if(!nm.name||!nm.email){ alert('Please enter nominee name and email.'); return; } }
     setStep(5); return;
   }
-  if(step===5){ if(!document.querySelector('input[name="cdw"]:checked')){ alert('Please choose a Collision Damage Waiver option.'); return; } setStep(6); return; }
+  if(step===5){
+    if(!document.querySelector('input[name="cdw"]:checked')){ alert('Please choose a Collision Damage Waiver option.'); return; }
+    const selectedCdw=document.querySelector('input[name="cdw"]:checked');
+    if(selectedCdw.id==='cdw-600'||selectedCdw.id==='cdw-1200'){
+      const confirmCb=document.getElementById('deposit-confirm-'+selectedCdw.id);
+      if(!confirmCb||!confirmCb.checked){
+        alert('Please confirm you are able to pay the required deposit on collection before continuing.');
+        return;
+      }
+    }
+    setStep(6);
+    return;
+  }
   if(step===6){ setStep(7); return; }
   if(step===7){ setStep(8); return; }
   if(step===8){ if(!validatePaymentFields()) return; setStep(9); return; }
