@@ -774,7 +774,9 @@ async function loadInsurance(){
       container.querySelectorAll('[id^="deposit-notice-"]').forEach(el=>el.style.display='none');
       const notice=document.getElementById('deposit-notice-'+this.id);
       if(notice) notice.style.display='block';
+      // Reset any deposit confirm checkboxes
       container.querySelectorAll('[id^="deposit-confirm-"]').forEach(cb=>cb.checked=false);
+      // Add listener to confirm checkbox if present
       const confirmCb=document.getElementById('deposit-confirm-'+this.id);
       if(confirmCb) confirmCb.addEventListener('change', updateLiveSummary);
       updateLiveSummary();
