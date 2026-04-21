@@ -741,17 +741,44 @@ async function loadInsurance(){
     const insurance=await r.json();
     const container=document.getElementById('insurance-container');
     if(!insurance.length){ container.innerHTML='<div class="muted">No insurance options available.</div>'; return; }
+
+    const depositInfo = {
+      'cdw-300':  { message: '✅ No deposit required with this option.', style: 'background:#dcfce7;border:1px solid #86efac;color:#15803d;', requiresConfirm: false },
+      'cdw-600':  { message: '⚠️ A refundable deposit of <strong>£200</strong> is required, payable on collection of the vehicle.', style: 'background:#fef3c7;border:1px solid #fcd34d;color:#92400e;', requiresConfirm: true },
+      'cdw-1200': { message: '⚠️ A refundable deposit of <strong>£400</strong> is required, payable on collection of the vehicle.', style: 'background:#fef3c7;border:1px solid #fcd34d;color:#92400e;', requiresConfirm: true }
+    };
+
     container.innerHTML=insurance.map(ins=>{
       const pg=addVAT(ins.price);
+      const deposit=depositInfo[ins.id]||{ message:'', style:'', requiresConfirm: false };
       return `<div class="extra">
         <input type="radio" name="cdw" id="${ins.id}" data-title="CDW: ${ins.name}" data-price="${ins.price}" style="margin-top:2px">
-        <div>
+        <div style="flex:1">
           <label for="${ins.id}">${ins.name} — <strong>+£${pg.toFixed(2)}/day inc VAT</strong></label>
           ${ins.description?`<div class="extra-desc">${ins.description}</div>`:''}
+          <div id="deposit-notice-${ins.id}" style="display:none;margin-top:8px;padding:10px 14px;border-radius:8px;font-size:13px;line-height:1.5;${deposit.style}">
+            ${deposit.message}
+            ${deposit.requiresConfirm ? `
+            <div style="margin-top:10px;display:flex;align-items:flex-start;gap:10px">
+              <input type="checkbox" id="deposit-confirm-${ins.id}" style="width:18px;height:18px;margin-top:2px;accent-color:#f59e0b;flex-shrink:0">
+              <label for="deposit-confirm-${ins.id}" style="font-weight:600;cursor:pointer;margin:0">
+                I confirm I am able to pay the required deposit on collection of the vehicle.
+              </label>
+            </div>` : ''}
+          </div>
         </div>
       </div>`;
     }).join('');
-    container.querySelectorAll('input[name="cdw"]').forEach(i=>i.addEventListener('change',updateLiveSummary));
+
+    container.querySelectorAll('input[name="cdw"]').forEach(i=>i.addEventListener('change',function(){
+      container.querySelectorAll('[id^="deposit-notice-"]').forEach(el=>el.style.display='none');
+      const notice=document.getElementById('deposit-notice-'+this.id);
+      if(notice) notice.style.display='block';
+      container.querySelectorAll('[id^="deposit-confirm-"]').forEach(cb=>cb.checked=false);
+      const confirmCb=document.getElementById('deposit-confirm-'+this.id);
+      if(confirmCb) confirmCb.addEventListener('change', updateLiveSummary);
+      updateLiveSummary();
+    }));
   }catch(e){ document.getElementById('insurance-container').innerHTML='<div style="color:var(--err)">Failed to load insurance options.</div>'; }
 }
 
