@@ -1206,12 +1206,24 @@ document.getElementById('nextBtn').addEventListener('click',async()=>{
   if(step===5){
     if(!document.querySelector('input[name="cdw"]:checked')){ alert('Please choose a Collision Damage Waiver option.'); return; }
     const selectedCdw=document.querySelector('input[name="cdw"]:checked');
-    if(selectedCdw.id==='cdw-600'||selectedCdw.id==='cdw-1200'){
-      const confirmCb=document.getElementById('deposit-confirm-'+selectedCdw.id);
-      if(!confirmCb||!confirmCb.checked){
-        alert('Please confirm you are able to pay the required deposit on collection before continuing.');
-        return;
-      }
+    
+    // Check both possible deposit confirmation checkboxes
+    const confirm600=document.getElementById('deposit-confirm-cdw-600');
+    const confirm1200=document.getElementById('deposit-confirm-cdw-1200');
+    const notice600=document.getElementById('deposit-notice-cdw-600');
+    const notice1200=document.getElementById('deposit-notice-cdw-1200');
+    
+    // If either deposit notice is visible, check its confirmation checkbox
+    const notice600Visible = notice600 && notice600.style.display !== 'none';
+    const notice1200Visible = notice1200 && notice1200.style.display !== 'none';
+    
+    if(notice600Visible && confirm600 && !confirm600.checked){
+      alert('Please confirm you are able to pay the required deposit on collection before continuing.');
+      return;
+    }
+    if(notice1200Visible && confirm1200 && !confirm1200.checked){
+      alert('Please confirm you are able to pay the required deposit on collection before continuing.');
+      return;
     }
     setStep(6);
     return;
