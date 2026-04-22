@@ -625,9 +625,15 @@ function getPriceForDays(days){
   const keys = Object.keys(selectedVehiclePricingTiers).map(Number).sort((a,b)=>a-b);
   if(!keys.length) return selectedVehiclePrice;
   const maxKey = keys[keys.length-1];
+  // Exact tier match
   if(days >= 1 && selectedVehiclePricingTiers[days] !== undefined) return selectedVehiclePricingTiers[days];
+  // Above the top tier — use the top tier rate
   if(days > maxKey) return selectedVehiclePricingTiers[maxKey];
-  return selectedVehiclePrice;
+  // Between tiers — walk back to the nearest lower tier (same logic as buildPricingTable)
+  const lowerKeys = keys.filter(k => k < days);
+  if(lowerKeys.length) return selectedVehiclePricingTiers[lowerKeys[lowerKeys.length-1]];
+  // Below the lowest tier (shouldn't normally happen since tier 1 usually exists)
+  return selectedVehiclePricingTiers[keys[0]];
 }
 
 function getDay1Price(v){
@@ -1069,25 +1075,31 @@ function computeUpsell(currentDays){
   const currentTotalGross = addVAT(currentTotalNet);
   const nextTotalGross = addVAT(nextTotalNet);
 
-  // Marginal cost of adding the extra day (could be low or even negative if tier drops significantly)
+  // Marginal cost of the extra day (what you actually pay MORE for going from N to N+1)
   const marginalGross = nextTotalGross - currentTotalGross;
 
-  // Effective per-day rate at each tier (gross)
+  // Effective per-day rate (gross) at each tier
   const currentEffRateGross = addVAT(currentDailyNet);
   const nextEffRateGross = addVAT(nextDailyNet);
 
   // How much the per-day rate drops if they extend
   const perDayDrop = currentEffRateGross - nextEffRateGross;
 
-  // Frame 1: marginal cost of the extra day
-  // Frame 2: per-day savings (shows them saving £X/day on every day)
-  // Pick whichever looks MORE compelling to the customer.
-  // A big per-day drop is usually the more dramatic framing.
+  // Safety: if marginal is negative or zero, something odd — skip the upsell
+  if(marginalGross < 0.01) return '';
 
-  if(perDayDrop > 0.01){
-    // Tier drops — lead with per-day savings across the whole booking
-    const totalSavingVsFlat = perDayDrop * nextDays;
-    return `<span class="upsell-icon">💡</span>Add 1 more day for just <strong>£${marginalGross.toFixed(2)}</strong> — your daily rate drops to <strong>£${nextEffRateGross.toFixed(2)}/day</strong> (save £${perDayDrop.toFixed(2)}/day)`;
+  // Decide which framing to lead with.
+  // The "tier break" moment is the most compelling: when the marginal cost of
+  // the extra day is LESS than the current per-day rate (because the discount
+  // applies retroactively to earlier days too). That's the "almost free day" story.
+  const marginalSavingVsCurrentRate = currentEffRateGross - marginalGross;
+
+  if(perDayDrop > 0.01 && marginalSavingVsCurrentRate > 0.01){
+    // Tier break — lead with the dramatic marginal price
+    return `<span class="upsell-icon">💡</span>Add 1 more day for just <strong>£${marginalGross.toFixed(2)}</strong> — that's £${marginalSavingVsCurrentRate.toFixed(2)} less than your current daily rate! (New rate: £${nextEffRateGross.toFixed(2)}/day)`;
+  } else if(perDayDrop > 0.01){
+    // Rate drops but marginal is still around/above current rate — lead with per-day savings
+    return `<span class="upsell-icon">💡</span>Extend to ${nextDays} days and your daily rate drops to <strong>£${nextEffRateGross.toFixed(2)}/day</strong> (save £${perDayDrop.toFixed(2)}/day)`;
   } else {
     // Flat rate — just show the simple marginal add
     return `<span class="upsell-icon">💡</span>Add 1 more day for just <strong>£${marginalGross.toFixed(2)}</strong> (£${nextEffRateGross.toFixed(2)}/day inc VAT)`;
