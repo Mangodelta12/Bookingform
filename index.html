@@ -179,7 +179,9 @@
 
   /* Helpers */
   .microhint{margin-top:5px;font-size:12px;color:var(--muted);line-height:1.5}
-  .dvla-actions{display:flex;gap:10px;align-items:center;margin-top:8px}
+  .dvla-actions{display:flex;gap:10px;align-items:center;margin-top:8px;flex-wrap:wrap;}
+.dvla-actions .link-btn{flex-shrink:0;}
+.dvla-actions input{flex:1;min-width:0;}
   .link-btn{display:inline-flex;align-items:center;padding:9px 14px;border-radius:10px;border:1px solid var(--border);text-decoration:none;font-size:13px;font-weight:600;color:var(--text);background:#fff;white-space:nowrap;transition:background .15s}
   .link-btn:hover{background:#f9fafb}
   .bad{color:#b91c1c}
