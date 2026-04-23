@@ -590,6 +590,17 @@
 
 <script>
 const API_BASE = 'https://packaging.panthertruckrental.co.uk';
+// Stripe setup for immediate payments
+const stripeInstance = Stripe('pk_live_bLR9tYQLeRCxCCxhvu46tHm3');
+const stripeElements = stripeInstance.elements();
+const stripeCardElement = stripeElements.create('card', {
+  hidePostalCode: true,
+  style: {
+    base: { fontSize: '16px', color: '#111827', '::placeholder': { color: '#9ca3af' } }
+  }
+});
+let stripeCardMounted = false;
+let isWithin48Hours = false;
 const FETCH_GET  = { mode:'cors', cache:'no-store', headers:{ 'Accept':'application/json','ngrok-skip-browser-warning':'true' } };
 const FETCH_JSON = { mode:'cors', cache:'no-store', headers:{ 'Accept':'application/json','Content-Type':'application/json','ngrok-skip-browser-warning':'true' } };
 const LOOKAHEAD_DAYS = 180, START_HOUR = 8;
