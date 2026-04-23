@@ -1202,6 +1202,38 @@ function setStep(n,direction){
     setTimeout(()=>{ buildPricingTable(); },150);
   }
 
+  if(step===8){
+    const d=getSelectedDates();
+    if(d){
+      const pickupTime=new Date(d.start);
+      pickupTime.setHours(8,0,0,0);
+      const now=new Date();
+      const diffHours=(pickupTime-now)/(1000*60*60);
+      isWithin48Hours=diffHours<48;
+
+      if(isWithin48Hours){
+        document.getElementById('payment-manual').style.display='none';
+        document.getElementById('payment-immediate').style.display='block';
+        // Mount Stripe card element
+        if(!stripeCardMounted){
+          stripeCardElement.mount('#stripe-card-element');
+          stripeCardMounted=true;
+          stripeCardElement.on('change',function(e){
+            const errEl=document.getElementById('stripe-card-errors');
+            if(e.error){ errEl.textContent=e.error.message; }
+            else{ errEl.textContent=''; }
+          });
+        }
+        // Update total display
+        const cost=calcTotal();
+        document.getElementById('immediate-total-amount').textContent='£'+cost.totalGross.toFixed(2);
+      } else {
+        document.getElementById('payment-manual').style.display='block';
+        document.getElementById('payment-immediate').style.display='none';
+      }
+    }
+  }
+
   if(step===9){
     const d=getSelectedDates(); const xs=getExtras(); const cost=calcTotal();
     const dayNames=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
