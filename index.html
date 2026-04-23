@@ -476,7 +476,9 @@
     <!-- Step 8: Payment -->
     <div id="panel-8" class="panel">
       <div class="section-label">Payment Details</div>
-      <div class="payment-section">
+
+      <!-- MANUAL CARD ENTRY (more than 48 hours away) -->
+      <div id="payment-manual" class="payment-section">
         <div class="payment-header">
           <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#1273eb" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
           <div>
@@ -484,7 +486,6 @@
             <div class="payment-subtitle">Your payment will be processed 48 hours before pickup</div>
           </div>
         </div>
-
         <div class="form-group">
           <label>Card Number *</label>
           <div class="card-input-group">
@@ -494,7 +495,6 @@
           </div>
           <div id="cardNumberError" class="error-message"></div>
         </div>
-
         <div class="row">
           <div class="form-group">
             <label>Expiry Date *</label>
@@ -507,23 +507,55 @@
             <div id="cardCVVError" class="error-message"></div>
           </div>
         </div>
-
         <div class="form-group">
           <label>Cardholder Name *</label>
           <input type="text" id="cardName" placeholder="Name as it appears on card" autocomplete="cc-name"/>
           <div id="cardNameError" class="error-message"></div>
         </div>
-
         <div class="security-badges">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M12 3v8M8 7l4-4 4 4"/></svg>
           <span>SSL Encrypted &nbsp;•&nbsp; PCI Compliant &nbsp;•&nbsp; Your payment details are secure</span>
         </div>
-
         <div class="payment-note">
           <strong>When will I be charged?</strong><br/>
           Your payment will be processed automatically 48 hours before your pickup time. You can cancel or modify your booking free of charge until then.
         </div>
       </div>
+
+      <!-- STRIPE IMMEDIATE PAYMENT (within 48 hours) -->
+      <div id="payment-immediate" class="payment-section" style="display:none">
+        <div class="payment-header">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+          <div>
+            <div class="payment-title">⚡ Immediate Payment Required</div>
+            <div class="payment-subtitle" style="color:#ef4444">Your booking is within 48 hours — payment will be taken now</div>
+          </div>
+        </div>
+        <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:#dc2626;line-height:1.6;">
+          ⚠️ Because your rental starts within 48 hours, <strong>full payment will be taken immediately</strong> when you submit your booking.
+        </div>
+        <div class="form-group">
+          <label>Card Details *</label>
+          <div id="stripe-card-element" style="padding:12px;border:1.5px solid var(--border);border-radius:10px;background:#fff;min-height:44px;"></div>
+          <div id="stripe-card-errors" class="error-message" style="margin-top:6px;"></div>
+        </div>
+        <div class="security-badges">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M12 3v8M8 7l4-4 4 4"/></svg>
+          <span>SSL Encrypted &nbsp;•&nbsp; Powered by Stripe &nbsp;•&nbsp; PCI Compliant</span>
+        </div>
+        <div id="immediate-total" style="margin-top:14px;padding:14px 16px;background:#eef5ff;border-radius:10px;font-weight:700;font-size:16px;color:var(--brand);display:flex;justify-content:space-between;">
+          <span>Total to pay now:</span>
+          <span id="immediate-total-amount">£0.00</span>
+        </div>
+      </div>
+
+      <!-- T&Cs acceptance -->
+      <div class="tcs-row" id="tcsRow">
+        <input type="checkbox" id="tcsAccepted">
+        <label for="tcsAccepted">I have read and agree to the <a href="#" onclick="return false">Terms &amp; Conditions</a> and <a href="#" onclick="return false">Rental Agreement</a>. I confirm that the driver holds a valid licence and meets all eligibility requirements.</label>
+      </div>
+      <div id="tcsError" class="error-message" style="display:none;margin-top:6px">You must accept the terms and conditions to continue.</div>
+    </div>
 
       <!-- T&Cs acceptance -->
       <div class="tcs-row" id="tcsRow">
