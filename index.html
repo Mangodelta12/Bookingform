@@ -1415,6 +1415,43 @@ document.getElementById('nextBtn').addEventListener('click',async()=>{
   const nextBtn=document.getElementById('nextBtn'); const origText=nextBtn.textContent;
   nextBtn.disabled=true; nextBtn.textContent='Processing...'; nextBtn.style.opacity='0.6';
   try{
+    let stripePaymentIntentId = null;
+
+    // If within 48 hours, take payment now via Stripe
+    if(isWithin48Hours){
+      const cost=calcTotal();
+      const amountPence=Math.round(cost.totalGross*100);
+
+      // Create payment intent
+      const piRes=await fetch(API_BASE+'/api/create-payment-intent',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({amount:amountPence})
+      });
+      const piData=await piRes.json();
+      if(!piRes.ok) throw new Error(piData.error||'Failed to create payment');
+
+      // Confirm payment with Stripe
+      const {error:stripeError,paymentIntent}=await stripeInstance.confirmCardPayment(
+        piData.client_secret,
+        {
+          payment_method:{
+            card:stripeCardElement,
+            billing_details:{
+              name:document.getElementById('name').value||'',
+              email:document.getElementById('email').value||''
+            }
+          }
+        }
+      );
+
+      if(stripeError) throw new Error(stripeError.message);
+      stripePaymentIntentId=paymentIntent.id;
+      body.stripePaymentIntentId=stripePaymentIntentId;
+      body.paymentStatus='paid';
+      body.payment=null;
+    }
+
     const r=await fetch(API_BASE+'/api/bookings',{method:'POST',...FETCH_JSON,body:JSON.stringify(body)});
     const data=await r.json().catch(()=>({}));
     if(!r.ok){ nextBtn.disabled=false; nextBtn.textContent=origText; nextBtn.style.opacity='1'; msg.textContent=data.error||('Failed (HTTP '+r.status+')'); msg.className='err'; return; }
