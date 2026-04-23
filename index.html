@@ -1375,7 +1375,20 @@ document.getElementById('nextBtn').addEventListener('click',async()=>{
   }
   if(step===6){ setStep(7); return; }
   if(step===7){ setStep(8); return; }
-  if(step===8){ if(!validatePaymentFields()) return; setStep(9); return; }
+  if(step===8){
+    if(!document.getElementById('tcsAccepted').checked){
+      document.getElementById('tcsError').style.display='block';
+      document.getElementById('tcsRow').classList.add('highlight');
+      return;
+    }
+    document.getElementById('tcsError').style.display='none';
+    document.getElementById('tcsRow').classList.remove('highlight');
+    if(!isWithin48Hours){
+      if(!validatePaymentFields()) return;
+    }
+    setStep(9);
+    return;
+  }
 
   const msg=document.getElementById('msg'); msg.textContent=''; msg.className='muted';
   const d=getSelectedDates(); if(!d){ msg.textContent='Missing dates.'; msg.className='err'; return; }
