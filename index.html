@@ -1447,6 +1447,12 @@ document.getElementById('nextBtn').addEventListener('click',async()=>{
   const cdw=document.querySelector('input[name="cdw"]:checked')?.dataset.title||'—';
   const others=xs.filter(x=>!x.id.startsWith('cdw')).map(x=>x.title).join(', ')||'None';
   const parts=[`Phone: ${document.getElementById('phone').value||'-'}`,`Postcode: ${document.getElementById('postcode').value||'-'}`,`Address: ${(document.getElementById('address').value||'-').replace(/\n/g,' ')}`,`CDW: ${cdw}`,`Extras: ${others}`];
+  const hasPoints=document.querySelector('input[name="hasPoints"]:checked')?.value||'no';
+  const hasAccidents=document.querySelector('input[name="hasAccidents"]:checked')?.value||'no';
+  const pointsDetails=document.getElementById('pointsText')?.value?.trim()||'';
+  const accidentsDetails=document.getElementById('accidentsText')?.value?.trim()||'';
+  parts.push('Points: '+(hasPoints==='yes'?'Yes — '+pointsDetails:'No'));
+  parts.push('Accidents: '+(hasAccidents==='yes'?'Yes — '+accidentsDetails:'No'));
   if(driverPayload.mode==='self'){ const dvla=getDvlaCode(),lic=getLicenceNo(); if(dvla) parts.push('DVLA: '+dvla); if(lic) parts.push('Licence: '+lic); if(noDvlaCode.checked) parts.push('DVLA: unable to generate code'); if(nonUkLicence.checked) parts.push('Non-UK licence'); }
   else{ const nm=driverPayload.nominee||{}; const nmLine=[nm.name||'',nm.email?`<${nm.email}>`:''].join(' ').trim(); if(nmLine) parts.push('Nominee: '+nmLine); }
 
