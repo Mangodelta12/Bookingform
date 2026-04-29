@@ -977,7 +977,18 @@ nonUkLicence.addEventListener('change',()=>{
   nonUkMsg.style.display=nonUkLicence.checked?'block':'none';
   updateLiveSummary();
 });
-
+document.getElementById('hasPointsYes').addEventListener('change',()=>{
+  document.getElementById('pointsDetail').style.display='block';
+});
+document.getElementById('hasPointsNo').addEventListener('change',()=>{
+  document.getElementById('pointsDetail').style.display='none';
+});
+document.getElementById('hasAccidentsYes').addEventListener('change',()=>{
+  document.getElementById('accidentsDetail').style.display='block';
+});
+document.getElementById('hasAccidentsNo').addEventListener('change',()=>{
+  document.getElementById('accidentsDetail').style.display='none';
+});
 document.getElementById('nonUkConvictionsYes').addEventListener('change',()=>{
   document.getElementById('nonUkConvictionsDetail').style.display='block';
 });
