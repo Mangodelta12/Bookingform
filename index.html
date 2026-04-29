@@ -384,7 +384,37 @@
           <input id="licenceNo" placeholder="e.g. DOEJX801010A99BC" maxlength="18">
           <div class="microhint">We'll mask this on the review screen (first 8 characters).</div>
         </div>
+         <div class="form-group highlight-input-group" style="margin-top:12px">
+          <label style="color:#1e40af">Do you have any current points on your licence?</label>
+          <div style="display:flex;gap:16px;margin-top:8px">
+            <label style="display:flex;align-items:center;gap:8px;font-weight:500;cursor:pointer">
+              <input type="radio" name="hasPoints" id="hasPointsNo" value="no" checked style="width:18px;height:18px;accent-color:#3b82f6"> No
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;font-weight:500;cursor:pointer">
+              <input type="radio" name="hasPoints" id="hasPointsYes" value="yes" style="width:18px;height:18px;accent-color:#3b82f6"> Yes
+            </label>
+          </div>
+          <div id="pointsDetail" style="display:none;margin-top:10px">
+            <label style="color:#1e40af;font-size:13px">Please provide details of your points</label>
+            <textarea id="pointsText" placeholder="e.g. SP30 — 3 points — Jan 2024..." style="width:100%;margin-top:6px;padding:10px 12px;border:1.5px solid #3b82f6;border-radius:8px;font:inherit;min-height:70px;resize:vertical"></textarea>
+          </div>
+        </div>
 
+        <div class="form-group highlight-input-group" style="margin-top:12px">
+          <label style="color:#1e40af">Have you had any accidents in the last 5 years?</label>
+          <div style="display:flex;gap:16px;margin-top:8px">
+            <label style="display:flex;align-items:center;gap:8px;font-weight:500;cursor:pointer">
+              <input type="radio" name="hasAccidents" id="hasAccidentsNo" value="no" checked style="width:18px;height:18px;accent-color:#3b82f6"> No
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;font-weight:500;cursor:pointer">
+              <input type="radio" name="hasAccidents" id="hasAccidentsYes" value="yes" style="width:18px;height:18px;accent-color:#3b82f6"> Yes
+            </label>
+          </div>
+          <div id="accidentsDetail" style="display:none;margin-top:10px">
+            <label style="color:#1e40af;font-size:13px">Please provide details of your accidents</label>
+            <textarea id="accidentsText" placeholder="e.g. Minor collision — Nov 2022 — no fault..." style="width:100%;margin-top:6px;padding:10px 12px;border:1.5px solid #3b82f6;border-radius:8px;font:inherit;min-height:70px;resize:vertical"></textarea>
+          </div>
+        </div>
         <div class="checkbox-row">
           <input type="checkbox" id="noDvlaCode">
           <label for="noDvlaCode">Unable to generate a check code?</label>
