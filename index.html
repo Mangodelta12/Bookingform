@@ -583,11 +583,26 @@
           <span>SSL Encrypted &nbsp;•&nbsp; PCI Compliant &nbsp;•&nbsp; Your payment details are secure</span>
         </div>
         <div class="payment-note">
-          <strong>When will I be charged?</strong><br/>
-          Your payment will be processed automatically 48 hours before your pickup time. You can cancel or modify your booking free of charge until then.
+          <strong>When would you like to pay?</strong><br/>
+          Please select your preferred payment option below.
+        </div>
+        <div style="margin-top:12px;display:flex;flex-direction:column;gap:10px">
+          <label style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px;border:2px solid var(--border);border-radius:10px;cursor:pointer;transition:border-color .2s" id="pay-option-preauth-label">
+            <input type="radio" name="paymentOption" id="pay-preauth" value="preauth" checked style="width:18px;height:18px;accent-color:var(--brand);margin-top:2px;flex-shrink:0">
+            <div>
+              <div style="font-weight:700;font-size:14px">💳 Process card 24-48 hours before collection</div>
+              <div style="font-size:13px;color:var(--muted);margin-top:4px;line-height:1.5">We will process your card details 24-48 hours before your hire commences saving you time on collection. You can cancel or modify your booking free of charge until then.</div>
+            </div>
+          </label>
+          <label style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px;border:2px solid var(--border);border-radius:10px;cursor:pointer;transition:border-color .2s" id="pay-option-office-label">
+            <input type="radio" name="paymentOption" id="pay-office" value="office" style="width:18px;height:18px;accent-color:var(--brand);margin-top:2px;flex-shrink:0">
+            <div>
+              <div style="font-weight:700;font-size:14px">🏢 Pay by card in the office on collection</div>
+              <div style="font-size:13px;color:var(--muted);margin-top:4px;line-height:1.5">Pay by credit or debit card when you collect your vehicle from our Chichester branch. No card details required now.</div>
+            </div>
+          </label>
         </div>
       </div>
-
       <!-- STRIPE IMMEDIATE PAYMENT (within 48 hours) -->
       <div id="payment-immediate" class="payment-section" style="display:none">
         <div class="payment-header">
