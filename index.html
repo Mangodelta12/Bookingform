@@ -1274,6 +1274,92 @@ function setStep(n,direction){
     p.classList.remove('active','slide-back');
     if(i===step-1){ if(direction==='back') p.classList.add('slide-back'); p.classList.add('active'); }
   });
+  // Enquiry popup
+document.getElementById('open-enquiry').addEventListener('click', function() {
+  // Pre-fill vehicle if already selected
+  var vehicleSelect = document.getElementById('enq-vehicle');
+  vehicleSelect.innerHTML = '<option value="">Select vehicle...</option>';
+  vehicles.forEach(function(v) {
+    var opt = document.createElement('option');
+    opt.value = v.name;
+    opt.textContent = v.name;
+    if (v.id === selectedVehicleId) opt.selected = true;
+    vehicleSelect.appendChild(opt);
+  });
+
+  // Pre-fill dates if already selected
+  var d = getSelectedDates();
+  if (d) {
+    var startStr = String(d.start.getDate()).padStart(2,'0') + '/' + 
+                   String(d.start.getMonth()+1).padStart(2,'0') + '/' + 
+                   d.start.getFullYear();
+    var endStr = String(addDays(d.end,1).getDate()).padStart(2,'0') + '/' + 
+                 String(addDays(d.end,1).getMonth()+1).padStart(2,'0') + '/' + 
+                 addDays(d.end,1).getFullYear();
+    document.getElementById('enq-dates').value = startStr + ' to ' + endStr;
+  }
+
+  // Pre-fill name/email if already entered
+  var nameEl = document.getElementById('name');
+  var emailEl = document.getElementById('email');
+  var phoneEl = document.getElementById('phone');
+  if (nameEl && nameEl.value) document.getElementById('enq-name').value = nameEl.value;
+  if (emailEl && emailEl.value) document.getElementById('enq-email').value = emailEl.value;
+  if (phoneEl && phoneEl.value) document.getElementById('enq-phone').value = phoneEl.value;
+
+  document.getElementById('enq-msg').textContent = '';
+  var overlay = document.getElementById('enquiry-overlay');
+  overlay.style.display = 'flex';
+});
+
+document.getElementById('enq-cancel').addEventListener('click', function() {
+  document.getElementById('enquiry-overlay').style.display = 'none';
+});
+
+document.getElementById('enq-submit').addEventListener('click', async function() {
+  var vehicle = document.getElementById('enq-vehicle').value;
+  var dates = document.getElementById('enq-dates').value.trim();
+  var name = document.getElementById('enq-name').value.trim();
+  var email = document.getElementById('enq-email').value.trim();
+  var phone = document.getElementById('enq-phone').value.trim();
+  var message = document.getElementById('enq-message').value.trim();
+  var msgEl = document.getElementById('enq-msg');
+
+  if (!vehicle || !dates || !name || !email) {
+    msgEl.style.color = '#dc2626';
+    msgEl.textContent = 'Please complete Vehicle, Dates, Name and Email.';
+    return;
+  }
+
+  var btn = document.getElementById('enq-submit');
+  btn.disabled = true;
+  btn.textContent = 'Sending...';
+  msgEl.textContent = '';
+
+  try {
+    var r = await fetch(API_BASE + '/api/enquiry', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({ vehicle, dates, name, email, phone, message })
+    });
+    var j = await r.json().catch(() => ({}));
+    if (r.ok) {
+      msgEl.style.color = '#15803d';
+      msgEl.textContent = '✓ Enquiry sent! We will be in touch shortly.';
+      btn.textContent = 'Sent ✓';
+    } else {
+      msgEl.style.color = '#dc2626';
+      msgEl.textContent = j.error || 'Failed to send enquiry. Please call us on 01243 778109.';
+      btn.disabled = false;
+      btn.textContent = 'Send Enquiry';
+    }
+  } catch(e) {
+    msgEl.style.color = '#dc2626';
+    msgEl.textContent = 'Network error. Please call us on 01243 778109.';
+    btn.disabled = false;
+    btn.textContent = 'Send Enquiry';
+  }
+});
   updateStepIndicator();
   if(step===2){
     setTimeout(()=>{ buildPricingTable(); },150);
