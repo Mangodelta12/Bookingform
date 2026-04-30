@@ -1589,7 +1589,8 @@ document.getElementById('nextBtn').addEventListener('click',async()=>{
     document.getElementById('tcsError').style.display='none';
     document.getElementById('tcsRow').classList.remove('highlight');
     if(!isWithin48Hours){
-      if(!validatePaymentFields()) return;
+      const payOffice = document.getElementById('pay-office') && document.getElementById('pay-office').checked;
+      if(!payOffice && !validatePaymentFields()) return;
     }
     setStep(9);
     return;
