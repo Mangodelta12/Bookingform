@@ -1611,6 +1611,10 @@ document.getElementById('nextBtn').addEventListener('click',async()=>{
   const hasAccidents=document.querySelector('input[name="hasAccidents"]:checked')?.value||'no';
   const pointsDetails=document.getElementById('pointsText')?.value?.trim()||'';
   const accidentsDetails=document.getElementById('accidentsText')?.value?.trim()||'';
+  const paymentPref = document.getElementById('pay-office') && document.getElementById('pay-office').checked
+    ? 'Pay in office on collection'
+    : 'Card to be processed 24-48 hours before collection';
+  parts.push('Payment preference: ' + paymentPref);
   parts.push('Points: '+(hasPoints==='yes'?'Yes — '+pointsDetails:'No'));
   parts.push('Accidents: '+(hasAccidents==='yes'?'Yes — '+accidentsDetails:'No'));
   if(driverPayload.mode==='self'){ const dvla=getDvlaCode(),lic=getLicenceNo(); if(dvla) parts.push('DVLA: '+dvla); if(lic) parts.push('Licence: '+lic); if(noDvlaCode.checked) parts.push('DVLA: unable to generate code'); if(nonUkLicence.checked) parts.push('Non-UK licence'); }
