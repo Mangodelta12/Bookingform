@@ -1488,7 +1488,20 @@ document.getElementById('tcsAccepted').addEventListener('change',()=>{
   document.getElementById('tcsError').style.display='none';
   document.getElementById('tcsRow').classList.remove('highlight');
 });
-
+document.querySelectorAll('input[name="paymentOption"]').forEach(function(radio){
+  radio.addEventListener('change', function(){
+    var isPreauth = document.getElementById('pay-preauth').checked;
+    var cardFields = document.querySelector('.payment-section #pay-option-preauth-label');
+    var manualFields = document.getElementById('payment-manual').querySelectorAll('.form-group');
+    
+    document.getElementById('pay-option-preauth-label').style.borderColor = isPreauth ? 'var(--brand)' : 'var(--border)';
+    document.getElementById('pay-option-office-label').style.borderColor = !isPreauth ? 'var(--brand)' : 'var(--border)';
+    
+    // Show or hide card input fields
+    var cardSection = document.getElementById('card-fields-section');
+    if(cardSection) cardSection.style.display = isPreauth ? 'block' : 'none';
+  });
+});
 function setupPaymentInputs(){
   const cn=document.getElementById('cardNumber'); const ce=document.getElementById('cardExpiry'); const cc=document.getElementById('cardCVV');
   if(!cn) return;
