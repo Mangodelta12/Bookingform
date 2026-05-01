@@ -872,6 +872,19 @@ fp=flatpickr('#calendar',{
         if(!data.hasIndefiniteAsset && data.maxAvailableDate){
           const blockFrom=new Date(data.maxAvailableDate);
           blockFrom.setHours(0,0,0,0);
+
+          const startMidnight=new Date(startDate); startMidnight.setHours(0,0,0,0);
+          const availDays=Math.round((blockFrom-startMidnight)/86400000);
+
+          if(availDays > 0){
+            const vehName = document.querySelector('.vehicle.selected .vehicle-name')?.textContent || 'selected vehicle';
+            availDaysGlobal = availDays;
+            availVehicleNameGlobal = vehName;
+            availStartDateGlobal = startDate.toLocaleDateString('en-GB');
+            availModalMsg.innerHTML = `The vehicle you have selected is only available for <strong>${availDays} day${availDays===1?'':'s'}</strong> from your chosen start date. Another customer has this vehicle booked but we may be able to move them to a different vehicle to make your requested dates available.<br><br>Please send us an enquiry and we will contact you to discuss.`;
+            availModal.style.display = 'flex';
+          }
+
           fp.set('disable',[function(date){
             if(blockedDates.has(ymd(date))) return true;
             const d=new Date(date); d.setHours(0,0,0,0);
