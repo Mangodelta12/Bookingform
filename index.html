@@ -888,6 +888,9 @@ fp=flatpickr('#calendar',{
           fp.set('disable',[function(date){
             if(blockedDates.has(ymd(date))) return true;
             const d=new Date(date); d.setHours(0,0,0,0);
+            // Disable dates before start date
+            const start=new Date(startDate); start.setHours(0,0,0,0);
+            if(d<start) return true;
             return d>=blockFrom;
           }]);
         }
