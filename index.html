@@ -883,17 +883,31 @@ async function refreshDisabledDates(){
   if(!selectedVehicleId){ fp.set('disable',[]); return; }
   const from=at08(new Date()).toISOString();
   const to=at08(addDays(new Date(),LOOKAHEAD_DAYS)).toISOString();
-  const qs=new URLSearchParams({vehicleId:selectedVehicleId,from,to}).toString();
-  let list=[];
-  try{ const r=await fetch(API_BASE+'/api/bookings?'+qs,FETCH_GET); list=await r.json(); }catch{}
-  const counts=new Map();
-  for(const b of(Array.isArray(list)?list:[])){
-    let d=new Date(b.start); d.setHours(0,0,0,0);
-    const end=new Date(b.end);
-    while(at08(d)<end){ const key=ymd(d); counts.set(key,(counts.get(key)||0)+1); d.setDate(d.getDate()+1); }
+
+  try{
+    const qs=new URLSearchParams({vehicleId:selectedVehicleId,from,to}).toString();
+    const r=await fetch(API_BASE+'/api/availability/blocked-dates?'+qs,FETCH_GET);
+    const data=await r.json();
+    const blockedDates=data.blockedDates||[];
+    window._blockedDates=new Set(blockedDates);
+    fp.set('disable',[function(date){ return blockedDates.includes(ymd(date)); }]);
+  }catch(e){
+    console.error('refreshDisabledDates error:',e);
+    // Fallback to old method
+    const qs=new URLSearchParams({vehicleId:selectedVehicleId,from,to}).toString();
+    let list=[];
+    try{ const r=await fetch(API_BASE+'/api/bookings?'+qs,FETCH_GET); list=await r.json(); }catch{}
+    const counts=new Map();
+    for(const b of(Array.isArray(list)?list:[])){
+      let d=new Date(b.start); d.setHours(0,0,0,0);
+      const end=new Date(b.end);
+      while(at08(d)<end){ const key=ymd(d); counts.set(key,(counts.get(key)||0)+1); d.setDate(d.getDate()+1); }
+    }
+    const cap=capacityByVeh.get(selectedVehicleId)||1;
+    window._availCounts=counts;
+    window._availCap=cap;
+    fp.set('disable',[date=>(counts.get(ymd(date))||0)>=cap]);
   }
-  const cap=capacityByVeh.get(selectedVehicleId)||1;
-  fp.set('disable',[date=>(counts.get(ymd(date))||0)>=cap]);
 }
 
 async function loadInsurance(){
