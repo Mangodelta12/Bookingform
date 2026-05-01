@@ -1544,6 +1544,85 @@ document.getElementById('tcsAccepted').addEventListener('change',()=>{
   document.getElementById('tcsError').style.display='none';
   document.getElementById('tcsRow').classList.remove('highlight');
 });
+  // Availability modal
+var availModal = document.getElementById('availability-modal');
+var enquiryModal = document.getElementById('enquiry-modal');
+var availModalMsg = document.getElementById('availability-modal-msg');
+var availDaysGlobal = 0;
+var availVehicleNameGlobal = '';
+var availStartDateGlobal = '';
+
+document.getElementById('avail-close-btn').onclick = function(){
+  availModal.style.display = 'none';
+  fp.clear();
+  refreshDisabledDates();
+};
+
+document.getElementById('avail-enquire-btn').onclick = function(){
+  availModal.style.display = 'none';
+  enquiryModal.style.display = 'flex';
+};
+
+document.getElementById('enq-close-btn').onclick = function(){
+  enquiryModal.style.display = 'none';
+  fp.clear();
+  refreshDisabledDates();
+};
+
+document.getElementById('enq-submit-btn').onclick = async function(){
+  const name = document.getElementById('enq-name').value.trim();
+  const phone = document.getElementById('enq-phone').value.trim();
+  const email = document.getElementById('enq-email').value.trim();
+  const notes = document.getElementById('enq-notes').value.trim();
+  const errEl = document.getElementById('enq-error');
+
+  errEl.style.display = 'none';
+
+  if(!name || !phone || !email){
+    errEl.textContent = 'Please fill in your name, phone and email.';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  const btn = document.getElementById('enq-submit-btn');
+  btn.textContent = 'Sending...';
+  btn.disabled = true;
+
+  try {
+    const r = await fetch(API_BASE + '/api/availability-enquiry', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name, phone, email, notes,
+        vehicleName: availVehicleNameGlobal,
+        startDate: availStartDateGlobal,
+        availableDays: availDaysGlobal
+      })
+    });
+
+    if(r.ok){
+      enquiryModal.style.display = 'none';
+      alert('✅ Thank you! Your enquiry has been sent to Panther Truck Rental. We will be in touch shortly.');
+      fp.clear();
+      refreshDisabledDates();
+    } else {
+      errEl.textContent = 'Failed to send enquiry. Please call us on 01243 776109.';
+      errEl.style.display = 'block';
+      btn.textContent = 'Send Enquiry';
+      btn.disabled = false;
+    }
+  } catch(e) {
+    errEl.textContent = 'Network error. Please call us on 01243 776109.';
+    errEl.style.display = 'block';
+    btn.textContent = 'Send Enquiry';
+    btn.disabled = false;
+  }
+};
+
+// Open enquiry from calendar key link
+document.getElementById('open-enquiry').onclick = function(){
+  enquiryModal.style.display = 'flex';
+};
 document.querySelectorAll('input[name="paymentOption"]').forEach(function(radio){
   radio.addEventListener('change', function(){
     var isPreauth = document.getElementById('pay-preauth').checked;
