@@ -300,8 +300,8 @@
                 <span style="color:#15803d">Available</span>
               </div>
               <div class="legend-item">
-                <div class="legend-dot" style="background:#fee2e2;border:1px solid #dc2626"></div>
-                <span style="color:#dc2626">Fully booked</span>
+                <div class="legend-dot" style="background:#f3f4f6;border:1px solid #9ca3af"></div>
+                <span style="color:#9ca3af">Unavailable</span>
               </div>
             </div>
             <div style="margin-top:10px;font-size:13px;color:#6b7280">
@@ -310,33 +310,6 @@
             </div>
           </div>
         </div>
-
-<!-- Enquiry Popup -->
-<div id="enquiry-overlay" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center">
-  <div style="background:#fff;border-radius:14px;padding:24px;max-width:480px;width:90%;max-height:90vh;overflow-y:auto;position:relative">
-    <h3 style="margin:0 0 16px;font-size:18px">📅 Date Enquiry</h3>
-    <p style="margin:0 0 16px;font-size:14px;color:#6b7280">Let us know what you need and we'll do our best to accommodate your request.</p>
-    <label style="display:block;font-weight:600;margin-bottom:4px">Vehicle Required</label>
-    <select id="enq-vehicle" style="width:100%;padding:10px;border:1px solid #e5e7eb;border-radius:8px;margin-bottom:12px;font:inherit">
-      <option value="">Select vehicle...</option>
-    </select>
-    <label style="display:block;font-weight:600;margin-bottom:4px">Dates Required</label>
-    <input id="enq-dates" placeholder="e.g. 15/06/2026 to 18/06/2026" style="width:100%;padding:10px;border:1px solid #e5e7eb;border-radius:8px;margin-bottom:12px;font:inherit">
-    <label style="display:block;font-weight:600;margin-bottom:4px">Your Name</label>
-    <input id="enq-name" placeholder="Full name" style="width:100%;padding:10px;border:1px solid #e5e7eb;border-radius:8px;margin-bottom:12px;font:inherit">
-    <label style="display:block;font-weight:600;margin-bottom:4px">Email</label>
-    <input id="enq-email" type="email" placeholder="you@example.com" style="width:100%;padding:10px;border:1px solid #e5e7eb;border-radius:8px;margin-bottom:12px;font:inherit">
-    <label style="display:block;font-weight:600;margin-bottom:4px">Phone</label>
-    <input id="enq-phone" placeholder="07..." style="width:100%;padding:10px;border:1px solid #e5e7eb;border-radius:8px;margin-bottom:12px;font:inherit">
-    <label style="display:block;font-weight:600;margin-bottom:4px">Additional Information</label>
-    <textarea id="enq-message" placeholder="Any additional details..." rows="3" style="width:100%;padding:10px;border:1px solid #e5e7eb;border-radius:8px;margin-bottom:16px;font:inherit;resize:vertical"></textarea>
-    <div id="enq-msg" style="margin-bottom:12px;font-size:14px"></div>
-    <div style="display:flex;gap:10px;justify-content:flex-end">
-      <button id="enq-cancel" style="padding:10px 20px;border:1px solid #e5e7eb;border-radius:8px;background:#fff;cursor:pointer;font:inherit">Cancel</button>
-      <button id="enq-submit" style="padding:10px 20px;background:#1273eb;color:#fff;border:none;border-radius:8px;font-weight:700;cursor:pointer;font:inherit">Send Enquiry</button>
-    </div>
-  </div>
-</div>
 
         <!-- Col 2: Info cards + date summary -->
         <div class="date-col-info">
@@ -357,6 +330,46 @@
             <p style="margin-top:8px">You can drop your vehicle off out of hours using our <strong>24 hour key drop facility</strong>.</p>
           </div>
           <div id="date-summary"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Availability Modal -->
+    <div id="availability-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center;">
+      <div style="background:#fff;border-radius:16px;padding:28px;max-width:480px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.3);position:relative;">
+        <div style="font-size:28px;margin-bottom:12px;">📅</div>
+        <h3 style="margin:0 0 12px;font-size:18px;color:#1e3a5f">Limited Availability</h3>
+        <p id="availability-modal-msg" style="font-size:14px;color:#374151;line-height:1.6;margin-bottom:20px;"></p>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <button id="avail-enquire-btn" style="padding:12px 20px;background:#1273eb;color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;">
+            📧 Send Enquiry to Panther
+          </button>
+          <button id="avail-close-btn" style="padding:12px 20px;background:#f3f4f6;color:#374151;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;">
+            Choose Different Dates
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Enquiry Modal -->
+    <div id="enquiry-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center;">
+      <div style="background:#fff;border-radius:16px;padding:28px;max-width:480px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+        <h3 style="margin:0 0 16px;font-size:18px;color:#1e3a5f">📧 Send Enquiry</h3>
+        <p style="font-size:13px;color:#6b7280;margin-bottom:16px;line-height:1.5">Please provide your details and we will contact you to discuss your requirements and see if we can accommodate your booking.</p>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px">
+          <input id="enq-name" type="text" placeholder="Your Name *" style="padding:10px 12px;border:1.5px solid #e5e7eb;border-radius:8px;font:inherit;font-size:14px">
+          <input id="enq-phone" type="tel" placeholder="Phone Number *" style="padding:10px 12px;border:1.5px solid #e5e7eb;border-radius:8px;font:inherit;font-size:14px">
+          <input id="enq-email" type="email" placeholder="Email Address *" style="padding:10px 12px;border:1.5px solid #e5e7eb;border-radius:8px;font:inherit;font-size:14px">
+          <textarea id="enq-notes" placeholder="Any additional details..." rows="3" style="padding:10px 12px;border:1.5px solid #e5e7eb;border-radius:8px;font:inherit;font-size:14px;resize:vertical"></textarea>
+        </div>
+        <div id="enq-error" style="display:none;color:#ef4444;font-size:13px;margin-bottom:10px"></div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <button id="enq-submit-btn" style="padding:12px 20px;background:#1273eb;color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;">
+            Send Enquiry
+          </button>
+          <button id="enq-close-btn" style="padding:12px 20px;background:#f3f4f6;color:#374151;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;">
+            Cancel
+          </button>
         </div>
       </div>
     </div>
