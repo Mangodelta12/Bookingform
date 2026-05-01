@@ -882,7 +882,7 @@ fp=flatpickr('#calendar',{
             availDaysGlobal = availDays;
             availVehicleNameGlobal = vehName;
             availStartDateGlobal = startDate.toLocaleDateString('en-GB');
-            availModalMsg.innerHTML = `The vehicle you have selected is only available for <strong>${availDays} day${availDays===1?'':'s'}</strong> from your chosen start date. Another customer has this vehicle booked but we may be able to move them to a different vehicle to make your requested dates available.<br><br>Please send us an enquiry and we will contact you to discuss.`;
+            availModalMsg.innerHTML = `The vehicle you have selected is only available for <strong>${availDays} day${availDays===1?'':'s'}</strong> from your chosen start date. Another customer has this vehicle booked within your selcted dates but we may be able to move them to a different vehicle to make your requested dates available.<br><br>Please send us an enquiry and we will contact you to discuss.`;
             availModal.style.display = 'flex';
           }
 
