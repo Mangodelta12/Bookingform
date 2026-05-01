@@ -887,7 +887,7 @@ fp=flatpickr('#calendar',{
   onDayCreate(dObj,dStr,fp,dayElem){
     const now=new Date(); now.setHours(0,0,0,0);
     if(dayElem.dateObj<now){ dayElem.style.color='#d1d5db'; dayElem.style.cursor='not-allowed'; }
-    else if(dayElem.classList.contains('flatpickr-disabled')){ dayElem.style.backgroundColor='#fee2e2'; dayElem.style.color='#dc2626'; dayElem.title='Fully booked'; }
+    else if(dayElem.classList.contains('flatpickr-disabled')){ dayElem.style.backgroundColor='#f3f4f6'; dayElem.style.color='#9ca3af'; dayElem.title='Unavailable'; }
     else{ dayElem.style.backgroundColor='#dcfce7'; dayElem.style.color='#15803d'; dayElem.title='Available'; }
   }
 });
