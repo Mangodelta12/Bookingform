@@ -847,7 +847,30 @@ async function loadData(){
 fp=flatpickr('#calendar',{
   inline:true, mode:'range', minDate:'today', dateFormat:'d/m/Y',
   locale: { firstDayOfWeek: 1 },
-  onChange(){ updateLiveSummary(); updateDateSummary(); highlightPricingRow(); },
+  async onChange(selectedDates){
+    if(selectedDates.length===1 && selectedVehicleId){
+      const startDate=selectedDates[0];
+      const startIso=at08(startDate).toISOString();
+      try{
+        const qs=new URLSearchParams({vehicleId:selectedVehicleId,from:startIso}).toString();
+        const r=await fetch(API_BASE+'/api/availability/range?'+qs,FETCH_GET);
+        const data=await r.json();
+        const blockedDates=window._blockedDates||new Set();
+        if(!data.hasIndefiniteAsset && data.maxAvailableDate){
+          const blockFrom=new Date(data.maxAvailableDate);
+          blockFrom.setHours(0,0,0,0);
+          fp.set('disable',[function(date){
+            if(blockedDates.has(ymd(date))) return true;
+            const d=new Date(date); d.setHours(0,0,0,0);
+            return d>=blockFrom;
+          }]);
+        }
+      }catch(e){ console.error('Availability range check error:',e); }
+    } else if(selectedDates.length===0||selectedDates.length===2){
+      await refreshDisabledDates();
+    }
+    updateLiveSummary(); updateDateSummary(); highlightPricingRow();
+  },
   onDayCreate(dObj,dStr,fp,dayElem){
     const now=new Date(); now.setHours(0,0,0,0);
     if(dayElem.dateObj<now){ dayElem.style.color='#d1d5db'; dayElem.style.cursor='not-allowed'; }
