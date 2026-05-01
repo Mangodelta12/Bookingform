@@ -893,6 +893,14 @@ fp=flatpickr('#calendar',{
             if(d<start) return true;
             return d>=blockFrom;
           }]);
+          } else {
+          // Full availability — just block dates before start date
+          fp.set('disable',[function(date){
+            if(blockedDates.has(ymd(date))) return true;
+            const d=new Date(date); d.setHours(0,0,0,0);
+            const start=new Date(startDate); start.setHours(0,0,0,0);
+            return d<start;
+          }]);
         }
       }catch(e){ console.error('Availability range check error:',e); }
     } else if(selectedDates.length===0||selectedDates.length===2){
