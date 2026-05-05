@@ -1415,7 +1415,8 @@ if (enqCancelBtn) enqCancelBtn.addEventListener('click', function() {
   document.getElementById('enquiry-overlay').style.display = 'none';
 });
 
-document.getElementById('enq-submit').addEventListener('click', async function() {
+var enqSubmitBtn = document.getElementById('enq-submit');
+if (enqSubmitBtn) enqSubmitBtn.addEventListener('click', async function() {
   var vehicle = document.getElementById('enq-vehicle').value;
   var dates = document.getElementById('enq-dates').value.trim();
   var name = document.getElementById('enq-name').value.trim();
