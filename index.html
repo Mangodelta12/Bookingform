@@ -1591,20 +1591,26 @@ var availDaysGlobal = 0;
 var availVehicleNameGlobal = '';
 var availStartDateGlobal = '';
 
-document.getElementById('avail-close-btn').onclick = function(){
+var availCloseBtn = document.getElementById('avail-close-btn');
+if(availCloseBtn) availCloseBtn.onclick = function(){
   availModal.style.display = 'none';
   fp.clear();
   refreshDisabledDates();
 };
-document.getElementById('avail-continue-btn').onclick = function(){
+
+var availContinueBtn = document.getElementById('avail-continue-btn');
+if(availContinueBtn) availContinueBtn.onclick = function(){
   availModal.style.display = 'none';
 };
-document.getElementById('avail-enquire-btn').onclick = function(){
+
+var availEnquireBtn = document.getElementById('avail-enquire-btn');
+if(availEnquireBtn) availEnquireBtn.onclick = function(){
   availModal.style.display = 'none';
   enquiryModal.style.display = 'flex';
 };
 
-document.getElementById('enq-close-btn').onclick = function(){
+var enqCloseBtn = document.getElementById('enq-close-btn');
+if(enqCloseBtn) enqCloseBtn.onclick = function(){
   enquiryModal.style.display = 'none';
   fp.clear();
   refreshDisabledDates();
