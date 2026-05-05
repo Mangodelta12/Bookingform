@@ -861,6 +861,7 @@ async function loadData(){
 fp=flatpickr('#calendar',{
   inline:true, mode:'range', minDate:'today', dateFormat:'d/m/Y',
   locale: { firstDayOfWeek: 1 },
+  allowInvalidPreload: true,
   async onChange(selectedDates){
     if(selectedDates.length===1 && selectedVehicleId){
       const startDate=selectedDates[0];
