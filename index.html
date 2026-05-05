@@ -1372,7 +1372,8 @@ function setStep(n,direction){
     if(i===step-1){ if(direction==='back') p.classList.add('slide-back'); p.classList.add('active'); }
   });
   // Enquiry popup
-document.getElementById('open-enquiry').addEventListener('click', function() {
+var openEnquiryBtn = document.getElementById('open-enquiry');
+if (openEnquiryBtn) openEnquiryBtn.addEventListener('click', function() {
   // Pre-fill vehicle if already selected
   var vehicleSelect = document.getElementById('enq-vehicle');
   vehicleSelect.innerHTML = '<option value="">Select vehicle...</option>';
