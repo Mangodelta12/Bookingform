@@ -887,7 +887,7 @@ fp=flatpickr('#calendar',{
           const availDays=Math.round((blockFrom-startMidnight)/86400000);
 
           if(availDays > 0 && availDays < 7){
-  const vehName = document.querySelector('.vehicle.selected .vehicle-name')?.textContent || 'selected vehicle';
+  const vehName = selectedVehicleName || 'selected vehicle';
   availDaysGlobal = availDays;
   availVehicleNameGlobal = vehName;
   availStartDateGlobal = startDate.toLocaleDateString('en-GB');
