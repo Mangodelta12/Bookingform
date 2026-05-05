@@ -1659,11 +1659,12 @@ document.getElementById('enq-submit-btn').onclick = async function(){
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        name, phone, email, notes,
-        vehicleName: availVehicleNameGlobal,
-        startDate: availStartDateGlobal,
-        availableDays: availDaysGlobal
-      })
+  name, phone, email, notes,
+  vehicleName: availVehicleNameGlobal,
+  startDate: availStartDateGlobal,
+  availableDays: availDaysGlobal,
+  daysRequired: document.getElementById('enq-days-required')?.value || 'Not specified'
+})
     });
 
     if(r.ok){
