@@ -1614,6 +1614,13 @@ if(availContinueBtn) availContinueBtn.onclick = function(){
 var availEnquireBtn = document.getElementById('avail-enquire-btn');
 if(availEnquireBtn) availEnquireBtn.onclick = function(){
   availModal.style.display = 'none';
+  // Populate summary
+  var summaryVehicle = document.getElementById('enq-summary-vehicle');
+  var summaryDate = document.getElementById('enq-summary-date');
+  var summaryDays = document.getElementById('enq-summary-days');
+  if(summaryVehicle) summaryVehicle.textContent = availVehicleNameGlobal || '—';
+  if(summaryDate) summaryDate.textContent = availStartDateGlobal || '—';
+  if(summaryDays) summaryDays.textContent = availDaysGlobal + ' day' + (availDaysGlobal === 1 ? '' : 's');
   enquiryModal.style.display = 'flex';
 };
 
