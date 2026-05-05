@@ -1410,7 +1410,8 @@ if (openEnquiryBtn) openEnquiryBtn.addEventListener('click', function() {
   overlay.style.display = 'flex';
 });
 
-document.getElementById('enq-cancel').addEventListener('click', function() {
+var enqCancelBtn = document.getElementById('enq-cancel');
+if (enqCancelBtn) enqCancelBtn.addEventListener('click', function() {
   document.getElementById('enquiry-overlay').style.display = 'none';
 });
 
