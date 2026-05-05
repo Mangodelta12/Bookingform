@@ -1597,7 +1597,9 @@ document.getElementById('avail-close-btn').onclick = function(){
   fp.clear();
   refreshDisabledDates();
 };
-
+document.getElementById('avail-continue-btn').onclick = function(){
+  availModal.style.display = 'none';
+};
 document.getElementById('avail-enquire-btn').onclick = function(){
   availModal.style.display = 'none';
   enquiryModal.style.display = 'flex';
