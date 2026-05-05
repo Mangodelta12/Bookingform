@@ -360,6 +360,11 @@
       <div style="background:#fff;border-radius:16px;padding:28px;max-width:480px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.3);">
         <h3 style="margin:0 0 16px;font-size:18px;color:#1e3a5f">📧 Send Enquiry</h3>
         <p style="font-size:13px;color:#6b7280;margin-bottom:16px;line-height:1.5">Please provide your details and we will contact you to discuss your requirements and see if we can accommodate your booking.</p>
+        <div id="enq-booking-summary" style="background:#f0fdf4;border:1.5px solid #15803d;border-radius:8px;padding:12px;margin-bottom:16px;font-size:13px;color:#374151">
+          <div><strong>Vehicle:</strong> <span id="enq-summary-vehicle">—</span></div>
+          <div><strong>Requested start date:</strong> <span id="enq-summary-date">—</span></div>
+          <div><strong>Available days from that date:</strong> <span id="enq-summary-days">—</span></div>
+        </div>
         <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px">
           <input id="enq-name" type="text" placeholder="Your Name *" style="padding:10px 12px;border:1.5px solid #e5e7eb;border-radius:8px;font:inherit;font-size:14px">
           <input id="enq-phone" type="tel" placeholder="Phone Number *" style="padding:10px 12px;border:1.5px solid #e5e7eb;border-radius:8px;font:inherit;font-size:14px">
