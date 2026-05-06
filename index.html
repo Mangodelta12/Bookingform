@@ -1467,7 +1467,9 @@ if (enqCancelBtn) enqCancelBtn.addEventListener('click', function() {
 var enqSubmitBtn = document.getElementById('enq-submit');
 if (enqSubmitBtn) enqSubmitBtn.addEventListener('click', async function() {
   var vehicle = document.getElementById('enq-vehicle').value;
-  var dates = document.getElementById('enq-dates').value.trim();
+  var startDate = document.getElementById('enq-start-date') ? document.getElementById('enq-start-date').value.trim() : '';
+  var numDays = document.getElementById('enq-num-days') ? document.getElementById('enq-num-days').value.trim() : '';
+  var dates = startDate ? startDate + (numDays ? ' for ' + numDays + ' day' + (numDays > 1 ? 's' : '') : '') : (document.getElementById('enq-dates') ? document.getElementById('enq-dates').value.trim() : '');
   var name = document.getElementById('enq-name').value.trim();
   var email = document.getElementById('enq-email').value.trim();
   var phone = document.getElementById('enq-phone').value.trim();
