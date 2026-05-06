@@ -1468,30 +1468,30 @@ if (genqCancelBtn) genqCancelBtn.addEventListener('click', function() {
   document.getElementById('enquiry-overlay').style.display = 'none';
 });
 
-var enqSubmitBtn = document.getElementById('enq-submit');
-if (enqSubmitBtn) enqSubmitBtn.addEventListener('click', async function() {
+var genqSubmitBtn = document.getElementById('genq-submit');
+if (genqSubmitBtn) genqSubmitBtn.addEventListener('click', async function() {
   var vehicle = document.getElementById('enq-vehicle').value;
-  var startDate = document.getElementById('enq-start-date') ? document.getElementById('enq-start-date').value.trim() : '';
-  var numDays = document.getElementById('enq-num-days') ? document.getElementById('enq-num-days').value.trim() : '';
-  var dates = startDate ? startDate + (numDays ? ' for ' + numDays + ' day' + (numDays > 1 ? 's' : '') : '') : (document.getElementById('enq-dates') ? document.getElementById('enq-dates').value.trim() : '');
-  var name = document.getElementById('enq-name').value.trim();
-  var email = document.getElementById('enq-email').value.trim();
-  var phone = document.getElementById('enq-phone').value.trim();
-  var message = document.getElementById('enq-message').value.trim();
-  var msgEl = document.getElementById('enq-msg');
+  var startDate = document.getElementById('enq-start-date').value.trim();
+  var numDays = document.getElementById('enq-num-days').value.trim();
+  var name = document.getElementById('genq-name').value.trim();
+  var email = document.getElementById('genq-email').value.trim();
+  var phone = document.getElementById('genq-phone').value.trim();
+  var message = document.getElementById('genq-message').value.trim();
+  var msgEl = document.getElementById('genq-msg');
 
   if (!vehicle || !name || !email) {
     msgEl.style.color = '#dc2626';
     msgEl.textContent = 'Please complete Vehicle, Name and Email.';
     return;
   }
-  if (!dates) {
+  if (!startDate) {
     msgEl.style.color = '#dc2626';
     msgEl.textContent = 'Please enter a start date.';
     return;
   }
 
-  var btn = document.getElementById('enq-submit');
+  var dates = startDate + (numDays ? ' for ' + numDays + ' day' + (parseInt(numDays) > 1 ? 's' : '') : '');
+  var btn = document.getElementById('genq-submit');
   btn.disabled = true;
   btn.textContent = 'Sending...';
   msgEl.textContent = '';
@@ -1502,14 +1502,14 @@ if (enqSubmitBtn) enqSubmitBtn.addEventListener('click', async function() {
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
       body: JSON.stringify({ vehicle, dates, name, email, phone, message })
     });
-    var j = await r.json().catch(() => ({}));
+    var j = await r.json().catch(function() { return {}; });
     if (r.ok) {
       msgEl.style.color = '#15803d';
       msgEl.textContent = '✓ Enquiry sent! We will be in touch shortly.';
       btn.textContent = 'Sent ✓';
     } else {
       msgEl.style.color = '#dc2626';
-      msgEl.textContent = j.error || 'Failed to send enquiry. Please call us on 01243 778109.';
+      msgEl.textContent = j.error || 'Failed to send. Please call us on 01243 778109.';
       btn.disabled = false;
       btn.textContent = 'Send Enquiry';
     }
