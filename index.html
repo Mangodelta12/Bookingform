@@ -1463,6 +1463,11 @@ if (enqCancelBtn) enqCancelBtn.addEventListener('click', function() {
   document.getElementById('enquiry-overlay').style.display = 'none';
 });
 
+var genqCancelBtn = document.getElementById('genq-cancel');
+if (genqCancelBtn) genqCancelBtn.addEventListener('click', function() {
+  document.getElementById('enquiry-overlay').style.display = 'none';
+});
+
 var enqSubmitBtn = document.getElementById('enq-submit');
 if (enqSubmitBtn) enqSubmitBtn.addEventListener('click', async function() {
   var vehicle = document.getElementById('enq-vehicle').value;
