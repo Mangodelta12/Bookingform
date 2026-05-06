@@ -386,7 +386,33 @@
         </div>
       </div>
     </div>
-
+<!-- General Date Enquiry Overlay -->
+<div id="enquiry-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center;">
+  <div style="background:#fff;border-radius:16px;padding:28px;max-width:480px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.3);max-height:90vh;overflow-y:auto;">
+    <h3 style="margin:0 0 8px;font-size:18px;color:#1e3a5f">📅 Date Enquiry</h3>
+    <p style="font-size:13px;color:#6b7280;margin-bottom:16px;line-height:1.5">Let us know what you need and we'll do our best to accommodate your request.</p>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px">
+      <select id="enq-vehicle" style="padding:10px 12px;border:1.5px solid #e5e7eb;border-radius:8px;font:inherit;font-size:14px">
+        <option value="">Select vehicle required...</option>
+      </select>
+      <input id="enq-start-date" type="text" placeholder="Start date required (e.g. 15/06/2026)" style="padding:10px 12px;border:1.5px solid #e5e7eb;border-radius:8px;font:inherit;font-size:14px">
+      <input id="enq-num-days" type="number" min="1" placeholder="Number of days required" style="padding:10px 12px;border:1.5px solid #e5e7eb;border-radius:8px;font:inherit;font-size:14px">
+      <input id="enq-name" type="text" placeholder="Your Name *" style="padding:10px 12px;border:1.5px solid #e5e7eb;border-radius:8px;font:inherit;font-size:14px">
+      <input id="enq-phone" type="tel" placeholder="Phone Number *" style="padding:10px 12px;border:1.5px solid #e5e7eb;border-radius:8px;font:inherit;font-size:14px">
+      <input id="enq-email" type="email" placeholder="Email Address *" style="padding:10px 12px;border:1.5px solid #e5e7eb;border-radius:8px;font:inherit;font-size:14px">
+      <textarea id="enq-message" placeholder="Any additional details..." rows="3" style="padding:10px 12px;border:1.5px solid #e5e7eb;border-radius:8px;font:inherit;font-size:14px;resize:vertical"></textarea>
+    </div>
+    <div id="enq-msg" style="margin-bottom:10px;font-size:13px"></div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <button id="enq-submit" style="padding:12px 20px;background:#1273eb;color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;">
+        Send Enquiry
+      </button>
+      <button id="enq-cancel" style="padding:12px 20px;background:#f3f4f6;color:#374151;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;">
+        Cancel
+      </button>
+    </div>
+  </div>
+</div>
      <!-- Step 3: Your Details -->
     <div id="panel-3" class="panel">
       <div class="section-label">Your Details</div>
