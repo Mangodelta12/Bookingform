@@ -1476,9 +1476,14 @@ if (enqSubmitBtn) enqSubmitBtn.addEventListener('click', async function() {
   var message = document.getElementById('enq-message').value.trim();
   var msgEl = document.getElementById('enq-msg');
 
-  if (!vehicle || !dates || !name || !email) {
+  if (!vehicle || !name || !email) {
     msgEl.style.color = '#dc2626';
-    msgEl.textContent = 'Please complete Vehicle, Dates, Name and Email.';
+    msgEl.textContent = 'Please complete Vehicle, Name and Email.';
+    return;
+  }
+  if (!dates) {
+    msgEl.style.color = '#dc2626';
+    msgEl.textContent = 'Please enter a start date.';
     return;
   }
 
