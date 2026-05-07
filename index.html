@@ -1728,10 +1728,6 @@ document.getElementById('enq-submit-btn').onclick = async function(){
   }
 };
 
-// Open enquiry from calendar key link
-document.getElementById('open-enquiry').onclick = function(){
-  enquiryModal.style.display = 'flex';
-};
 document.querySelectorAll('input[name="paymentOption"]').forEach(function(radio){
   radio.addEventListener('change', function(){
     var isPreauth = document.getElementById('pay-preauth').checked;
