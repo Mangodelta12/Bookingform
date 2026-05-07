@@ -1231,6 +1231,15 @@ function getExtras(){
   document.querySelectorAll('#extras-container input[type="checkbox"]:checked').forEach(i=>{
     extras.push({id:i.id,title:i.dataset.title,price:Number(i.dataset.price||0),perDay:i.dataset.perday==='true'});
   });
+  // Add purchase extras with quantities
+  document.querySelectorAll('#extras-container input[type="hidden"][data-qty]').forEach(inp=>{
+    const qty=parseInt(inp.dataset.qty||'0');
+    if(qty>0){
+      for(let i=0;i<qty;i++){
+        extras.push({id:inp.id,title:inp.dataset.title,price:Number(inp.dataset.price||0),perDay:false,qty:qty});
+      }
+    }
+  });
   return extras;
 }
 
