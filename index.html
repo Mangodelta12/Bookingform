@@ -1461,7 +1461,11 @@ if (enqCancelBtn) enqCancelBtn.addEventListener('click', function() {
 
 var genqCancelBtn = document.getElementById('genq-cancel');
 if (genqCancelBtn) genqCancelBtn.addEventListener('click', function() {
-  document.getElementById('enquiry-overlay').style.display = 'none';
+  var overlay = document.getElementById('enquiry-overlay');
+  overlay.style.display = 'none';
+  overlay.style.pointerEvents = 'none';
+  // Prevent event bubbling
+  event.stopPropagation();
 });
 
 var genqSubmitBtn = document.getElementById('genq-submit');
