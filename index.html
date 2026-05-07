@@ -1055,19 +1055,53 @@ async function loadExtras(){
     const rentItems=extras.filter(e=>(e.type||'rent')==='rent');
     const purchaseItems=extras.filter(e=>e.type==='purchase');
     let html='';
-    const renderExtra=extra=>{
+
+    const renderRentExtra=extra=>{
       const pg=addVAT(extra.price);
       const pl=extra.perDay?`£${pg.toFixed(2)}/day inc VAT`:`£${pg.toFixed(2)} inc VAT`;
       const imgSrc=extra.image||'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64"%3E%3Crect fill="%23e5e7eb" width="64" height="64"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="%23999" font-size="12"%3ENo img%3C/text%3E%3C/svg%3E';
       return `<div class="extra-item"><img src="${imgSrc}" alt="${extra.name}"><div><label class="extra-item-label" for="${extra.id}">${extra.name}</label><div class="extra-item-price">${pl}</div></div><input type="checkbox" id="${extra.id}" data-title="${extra.name}" data-price="${extra.price}" data-perday="${extra.perDay}"></div>`;
     };
-    if(rentItems.length){ html+=`<div class="extras-section-label" style="background:#eef5ff;color:#1273eb">Available to Rent</div>`+rentItems.map(renderExtra).join(''); }
-    if(purchaseItems.length){ html+=`<div class="extras-section-label" style="background:#f0fdf4;color:#15803d;margin-top:16px">Available to Purchase</div>`+purchaseItems.map(renderExtra).join(''); }
+
+    const renderPurchaseExtra=extra=>{
+      const pg=addVAT(extra.price);
+      const pl=`£${pg.toFixed(2)} inc VAT`;
+      const imgSrc=extra.image||'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64"%3E%3Crect fill="%23e5e7eb" width="64" height="64"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="%23999" font-size="12"%3ENo img%3C/text%3E%3C/svg%3E';
+      return `<div class="extra-item">
+        <img src="${imgSrc}" alt="${extra.name}">
+        <div style="flex:1">
+          <label class="extra-item-label">${extra.name}</label>
+          <div class="extra-item-price">${pl} each</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <button type="button" onclick="changePurchaseQty('${extra.id}',-1)" style="width:28px;height:28px;border:1px solid var(--border);border-radius:6px;background:#fff;font-size:16px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--brand)">−</button>
+          <span id="qty-display-${extra.id}" style="font-weight:700;min-width:24px;text-align:center">0</span>
+          <button type="button" onclick="changePurchaseQty('${extra.id}',1)" style="width:28px;height:28px;border:1px solid var(--border);border-radius:6px;background:#fff;font-size:16px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--brand)">+</button>
+          <input type="hidden" id="${extra.id}" data-title="${extra.name}" data-price="${extra.price}" data-perday="false" data-qty="0">
+        </div>
+      </div>`;
+    };
+
+    if(rentItems.length){ html+=`<div class="extras-section-label" style="background:#eef5ff;color:#1273eb">Available to Rent</div>`+rentItems.map(renderRentExtra).join(''); }
+    if(purchaseItems.length){ html+=`<div class="extras-section-label" style="background:#f0fdf4;color:#15803d;margin-top:16px">Available to Purchase</div>`+purchaseItems.map(renderPurchaseExtra).join(''); }
     container.innerHTML=html;
     container.querySelectorAll('input[type="checkbox"]').forEach(i=>i.addEventListener('change',updateLiveSummary));
   }catch(e){ document.getElementById('extras-container').innerHTML='<div style="color:var(--err)">Failed to load extras.</div>'; }
 }
 
+function changePurchaseQty(id, delta){
+  const input = document.getElementById(id);
+  const display = document.getElementById('qty-display-'+id);
+  if(!input || !display) return;
+  let qty = parseInt(input.dataset.qty||'0') + delta;
+  if(qty < 0) qty = 0;
+  input.dataset.qty = qty;
+  display.textContent = qty;
+  // Highlight if qty > 0
+  const item = input.closest('.extra-item');
+  if(item) item.style.background = qty > 0 ? '#f0fdf4' : '';
+  updateLiveSummary();
+}
 async function loadPackaging(){
   try{
     const r=await fetch(API_BASE+'/api/packaging',FETCH_GET);
