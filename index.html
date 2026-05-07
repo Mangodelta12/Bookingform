@@ -1423,42 +1423,37 @@ function setStep(n,direction){
   // Enquiry popup
 var openEnquiryBtn = document.getElementById('open-enquiry');
 if (openEnquiryBtn) openEnquiryBtn.addEventListener('click', function() {
-  // Pre-fill vehicle if already selected
+  // Populate vehicle dropdown
   var vehicleSelect = document.getElementById('enq-vehicle');
-  vehicleSelect.innerHTML = '<option value="">Select vehicle...</option>';
-  vehicles.forEach(function(v) {
-    var opt = document.createElement('option');
-    opt.value = v.name;
-    opt.textContent = v.name;
-    if (v.id === selectedVehicleId) opt.selected = true;
-    vehicleSelect.appendChild(opt);
-  });
-
-  // Pre-fill dates if already selected
+  if (vehicleSelect) {
+    vehicleSelect.innerHTML = '<option value="">Select vehicle required...</option>';
+    vehicles.forEach(function(v) {
+      var opt = document.createElement('option');
+      opt.value = v.name;
+      opt.textContent = v.name;
+      if (v.id === selectedVehicleId) opt.selected = true;
+      vehicleSelect.appendChild(opt);
+    });
+  }
+  // Pre-fill start date if already selected
   var d = getSelectedDates();
   if (d) {
     var startStr = String(d.start.getDate()).padStart(2,'0') + '/' + 
                    String(d.start.getMonth()+1).padStart(2,'0') + '/' + 
                    d.start.getFullYear();
-    var endStr = String(addDays(d.end,1).getDate()).padStart(2,'0') + '/' + 
-                 String(addDays(d.end,1).getMonth()+1).padStart(2,'0') + '/' + 
-                 addDays(d.end,1).getFullYear();
-    document.getElementById('enq-dates').value = startStr + ' to ' + endStr;
+    var startDateEl = document.getElementById('enq-start-date');
+    if (startDateEl) startDateEl.value = startStr;
   }
-
-  // Pre-fill name/email if already entered
-  var nameEl = document.getElementById('name');
-  var emailEl = document.getElementById('email');
-  var phoneEl = document.getElementById('phone');
-  if (nameEl && nameEl.value) document.getElementById('enq-name').value = nameEl.value;
-  if (emailEl && emailEl.value) document.getElementById('enq-email').value = emailEl.value;
-  if (phoneEl && phoneEl.value) document.getElementById('enq-phone').value = phoneEl.value;
-
-  document.getElementById('enq-msg').textContent = '';
+  // Clear message
+  var msgEl = document.getElementById('genq-msg');
+  if (msgEl) msgEl.textContent = '';
+  // Show overlay
   var overlay = document.getElementById('enquiry-overlay');
-  overlay.style.display = 'flex';
+  if (overlay) {
+    overlay.style.display = 'flex';
+    overlay.style.pointerEvents = 'auto';
+  }
 });
-
 var enqCancelBtn = document.getElementById('enq-cancel');
 if (enqCancelBtn) enqCancelBtn.addEventListener('click', function() {
   document.getElementById('enquiry-overlay').style.display = 'none';
