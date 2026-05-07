@@ -1507,6 +1507,11 @@ if (genqSubmitBtn) genqSubmitBtn.addEventListener('click', async function() {
       msgEl.style.color = '#15803d';
       msgEl.textContent = '✓ Enquiry sent! We will be in touch shortly.';
       btn.textContent = 'Sent ✓';
+      setTimeout(function() {
+        var overlay = document.getElementById('enquiry-overlay');
+        overlay.style.display = 'none';
+        overlay.style.pointerEvents = 'none';
+      }, 2000);
     } else {
       msgEl.style.color = '#dc2626';
       msgEl.textContent = j.error || 'Failed to send. Please call us on 01243 778109.';
