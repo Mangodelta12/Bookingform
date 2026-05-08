@@ -1960,11 +1960,17 @@ document.getElementById('nextBtn').addEventListener('click',async()=>{
             <tr><td>Vehicle</td><td>${esc(selectedVehicleName||'—')}</td></tr>
             <tr><td>Collection</td><td>08:00 ${collDay} ${collDate}</td></tr>
             <tr><td>Return by</td><td>08:00 ${retDay} ${retDate}</td></tr>
-            <tr><td>Total paid</td><td><strong>£${cost.totalGross.toFixed(2)} inc VAT</strong></td></tr>
+            <tr><td>${isWithin48Hours ? 'Total Paid' : (document.getElementById('pay-office')?.checked ? 'Total Cost' : 'Total Cost')}</td><td><strong>£${cost.totalGross.toFixed(2)} inc VAT</strong></td></tr>
             ${data.id?`<tr><td>Reference</td><td><code style="font-size:13px">${esc(data.id)}</code></td></tr>`:''}
           </table>
         </div>
-        <p style="font-size:13px;color:var(--muted)">Your payment will be processed 48 hours before collection. If you need to make changes, please contact us with your booking reference.</p>
+        <p style="font-size:13px;color:var(--muted)">${
+          isWithin48Hours 
+            ? 'Payment has been taken for your booking. If you need to make changes, please contact us with your booking reference.'
+            : document.getElementById('pay-office')?.checked 
+              ? 'Payment will be taken by card in the office when you collect your vehicle. If you need to make changes, please contact us with your booking reference.'
+              : 'Your payment will be processed 48 hours before collection. If you need to make changes, please contact us with your booking reference.'
+        }</p>
         <button class="primary" onclick="location.reload()" style="margin-top:8px">Make another booking</button>
       </div>`;
   }catch(e){ nextBtn.disabled=false; nextBtn.textContent=origText; nextBtn.style.opacity='1'; msg.textContent='Network error: '+(e.message||e); msg.className='err'; }
