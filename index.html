@@ -1820,6 +1820,11 @@ document.getElementById('nextBtn').addEventListener('click',async()=>{
       const dvla=getDvlaCode(),lic=getLicenceNo(),relaxed=noDvlaCode.checked||nonUkLicence.checked;
       if(!relaxed){ if(!dvla){ alert('Please enter your DVLA check code, or tick the appropriate box.'); return; } if(!lic){ alert('Please enter your driving licence number.'); return; } }
     } else { const nm=getNominee(); if(!nm.name||!nm.email){ alert('Please enter nominee name and email.'); return; } }
+    // Validate points and accidents questions
+    const pointsAnswered=document.querySelector('input[name="hasPoints"]:checked');
+    const accidentsAnswered=document.querySelector('input[name="hasAccidents"]:checked');
+    if(!pointsAnswered){ alert('Please indicate whether you have any current points on your licence.'); return; }
+    if(!accidentsAnswered){ alert('Please indicate whether you have had any accidents in the last 5 years.'); return; }
     setStep(5); return;
   }
   if(step===5){
