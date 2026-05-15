@@ -1175,11 +1175,13 @@ function setDriverMode(mode){
   updateLiveSummary();
 }
 selfDrivingToggle.addEventListener('change',()=>{ setDriverMode(selfDrivingToggle.checked?'self':'nominee'); });
-nominateToggle.addEventListener('change',()=>{ setDriverMode(nominateToggle.checked?'nominee':'self'); });
 noDvlaCode.addEventListener('change',()=>{
   if(noDvlaCode.checked){ nonUkLicence.checked=false; nonUkMsg.style.display='none'; }
   noDvlaMsg.style.display=noDvlaCode.checked?'block':'none';
   dvlaInput.classList.toggle('disabled',noDvlaCode.checked);
+  var showPointsAccidents = !noDvlaCode.checked && !nonUkLicence.checked;
+  document.getElementById('hasPointsGroup').style.display = showPointsAccidents?'block':'none';
+  document.getElementById('hasAccidentsGroup').style.display = showPointsAccidents?'block':'none';
   updateLiveSummary();
 });
 nonUkLicence.addEventListener('change',()=>{
