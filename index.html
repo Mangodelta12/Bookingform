@@ -1187,6 +1187,9 @@ noDvlaCode.addEventListener('change',()=>{
 nonUkLicence.addEventListener('change',()=>{
   if(nonUkLicence.checked){ noDvlaCode.checked=false; noDvlaMsg.style.display='none'; dvlaInput.classList.remove('disabled'); }
   nonUkMsg.style.display=nonUkLicence.checked?'block':'none';
+  var showPointsAccidents = !noDvlaCode.checked && !nonUkLicence.checked;
+  document.getElementById('hasPointsGroup').style.display = showPointsAccidents?'block':'none';
+  document.getElementById('hasAccidentsGroup').style.display = showPointsAccidents?'block':'none';
   updateLiveSummary();
 });
 document.getElementById('hasPointsYes').addEventListener('change',()=>{
