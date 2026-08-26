@@ -1252,7 +1252,7 @@ function calcTotal(){
   const dailyRateNet=getPriceForDays(days); const dailyRateGross=addVAT(dailyRateNet);
   const baseNet=dailyRateNet*days; const baseGross=addVAT(baseNet);
   const extrasNet=getExtras().reduce((acc,x)=>acc+(x.perDay?x.price*days:x.price),0); const extrasGross=addVAT(extrasNet);
-  const packagingNet=getPackaging().reduce((acc,p)=>acc+(p.price*p.quantity),0); const packagingGross=addVAT(packagingNet);
+  const packagingGross=getPackaging().reduce((acc,p)=>acc+(p.price*p.quantity),0); const packagingNet=packagingGross;
   const totalNet=baseNet+extrasNet+packagingNet; const totalGross=addVAT(totalNet); const vatAmount=totalGross-totalNet;
   return {days,dailyRateNet,dailyRateGross,baseNet,baseGross,extrasNet,extrasGross,packagingNet,packagingGross,totalNet,totalGross,vatAmount};
 }
