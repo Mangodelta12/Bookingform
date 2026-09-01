@@ -1629,7 +1629,7 @@ if (genqSubmitBtn) genqSubmitBtn.addEventListener('click', async function() {
     const others=xs.filter(x=>!x.id.startsWith('cdw'));
     html+=`<tr><td>Extras <span class="edit-link" onclick="setStep(6,'back')">Edit</span></td><td>${others.length?others.map(x=>`${x.title} — £${(addVAT(x.price)*(x.perDay?(d?d.days:1):1)).toFixed(2)}`).join('<br>'):'None'}</td></tr>`;
     const packaging=getPackaging();
-    html+=`<tr><td>Packaging <span class="edit-link" onclick="setStep(7,'back')">Edit</span></td><td>${packaging.length?packaging.map(p=>`${p.name} (x${p.quantity}) — £${(addVAT(p.price)*p.quantity).toFixed(2)}`).join('<br>'):'None'}</td></tr>`;
+    html+=`<tr><td>Packaging <span class="edit-link" onclick="setStep(7,'back')">Edit</span></td><td>${packaging.length?packaging.map(p=>`${p.name} (x${p.quantity}) — £${(p.price*p.quantity).toFixed(2)}`).join('<br>'):'None'}</td></tr>`;
     const mode=getDriverMode();
     if(mode==='self'){
       const dvla=getDvlaCode(),lic=getLicenceNo();
