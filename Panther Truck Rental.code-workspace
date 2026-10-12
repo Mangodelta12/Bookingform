@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../panther-packaging-backend"
+		}
+	],
+	"settings": {}
+}

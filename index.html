@@ -1828,10 +1828,12 @@ document.getElementById('nextBtn').addEventListener('click',async()=>{
     // Validate points and accidents questions
     const relaxed=noDvlaCode.checked||nonUkLicence.checked;
 if(!relaxed){
-  const pointsAnswered=document.querySelector('input[name="hasPoints"]:checked');
-  const accidentsAnswered=document.querySelector('input[name="hasAccidents"]:checked');
-  if(!pointsAnswered){ alert('Please indicate whether you have any current points on your licence.'); return; }
-  if(!accidentsAnswered){ alert('Please indicate whether you have had any accidents in the last 5 years.'); return; }
+      if(getDriverMode()==='self'){
+      const pointsAnswered=document.querySelector('input[name="hasPoints"]:checked');
+      const accidentsAnswered=document.querySelector('input[name="hasAccidents"]:checked');
+      if(!pointsAnswered){ alert('Please indicate whether you have any current points on your licence.'); return; }
+      if(!accidentsAnswered){ alert('Please indicate whether you have had any accidents in the last 5 years.'); return; }
+    }
 }
     setStep(5); return;
   }
