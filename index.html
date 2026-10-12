@@ -1175,6 +1175,7 @@ function setDriverMode(mode){
   updateLiveSummary();
 }
 selfDrivingToggle.addEventListener('change',()=>{ setDriverMode(selfDrivingToggle.checked?'self':'nominee'); });
+nominateToggle.addEventListener('change',()=>{ setDriverMode(nominateToggle.checked?'nominee':'self'); });
 noDvlaCode.addEventListener('change',()=>{
   if(noDvlaCode.checked){ nonUkLicence.checked=false; nonUkMsg.style.display='none'; }
   noDvlaMsg.style.display=noDvlaCode.checked?'block':'none';
